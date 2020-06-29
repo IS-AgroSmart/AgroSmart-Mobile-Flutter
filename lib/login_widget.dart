@@ -54,12 +54,12 @@ class _LoginFormState extends State<LoginForm> {
               TextFormField(
                   validator: usernameValidator,
                   decoration: InputDecoration(hintText: "Username"),
-                  onSaved: (val) => _username = val),
+                  onSaved: (val) => _username = val.trim()),
               TextFormField(
                 obscureText: true,
                 validator: passwordValidator,
                 decoration: InputDecoration(hintText: "Contraseña"),
-                onSaved: (val) => _pass = val,
+                onSaved: (val) => _pass = val.trim(),
               ),
               RaisedButton(
                 onPressed: () async {

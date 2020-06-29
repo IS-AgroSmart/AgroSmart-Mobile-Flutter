@@ -66,8 +66,8 @@ class Api {
           .where((u) => u.username == username)
           .toList();
       assert(users.length == 1);
-      Helpers.loggedInUser = users[0];
-      return users[0];
+      Helpers.loggedInUser = users.first;
+      return users.first;
     } else {
       throw Exception(response.body);
     }
@@ -150,10 +150,7 @@ class Api {
       FlightResult.MODEL3D: "3dmodel"
     };
 
-    var status = await Permission.storage.status;
-    if (!status.isGranted) {
-      await Permission.storage.request();
-    }
+    if(!(await _askPermission())) return;
     Directory downloadDir = Directory(
         (await DownloadsPathProvider.downloadsDirectory).path +
             "/DroneApp/${f.name}");
@@ -187,6 +184,7 @@ class Api {
     listReports.forEach((k,v) =>
       details += v? values[k] : "" );
     details += details.length > 0 ? "/" : "";
+    if(!(await _askPermission())) return;
 
     Directory downloadDir = Directory(
         (await DownloadsPathProvider.downloadsDirectory).path +
@@ -205,6 +203,14 @@ class Api {
       openFileFromNotification:
           true, // click on notification to open downloaded file (for Android)
     );
+  }
+
+  static Future<bool> _askPermission() async {
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      return (await Permission.storage.request()).isGranted;
+    }
+    return true;
   }
 
   static checkConection() async {

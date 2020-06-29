@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 class User {
-  final username, name, email;
+  final String username, name, email;
 
   User({this.username, this.name, this.email});
 
