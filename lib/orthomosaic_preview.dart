@@ -38,7 +38,7 @@ class _OrthomosaicPreviewWidgetState extends State<OrthomosaicPreviewWidget> {
   }
 }
 
-enum FlightResult { ORTHOMOSAIC, MODEL3D }
+enum FlightResult { ORTHOMOSAIC, MODEL3D, CLOUD }
 
 class FlightResultsHelper {
   static String description(FlightResult r) => {

@@ -4,6 +4,7 @@ import 'package:flutter_app/login_widget.dart';
 import 'package:flutter_app/new_flight.dart';
 import 'package:flutter_app/orthomosaic_preview.dart';
 import 'package:flutter_app/processing_flights_widget.dart';
+import 'package:flutter_app/reports.dart';
 import 'package:flutter_app/results.dart';
 import 'package:flutter_app/waiting_flights_widget.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -15,8 +16,12 @@ void main() async {
   await FlutterDownloader.initialize();
   await initializeDateFormatting('es_ES', null);
 
-  if ((await Api.getToken()) != null) await Api.fetchUserDetails();
-  runApp(MyNewApp());
+  try {
+    if ((await Api.getToken()) != null) await Api.fetchUserDetails();
+    runApp(MyNewApp());
+  }catch(Exception) {
+    print("not connected");
+  }
 }
 
 class MyNewApp extends StatefulWidget {
@@ -36,6 +41,7 @@ class _AppState extends State<MyNewApp> {
         LoginWidget.routeName: (context) => LoginWidget(),
         CompletedFlightsWidget.routeName: (context) => CompletedFlightsWidget(),
         ResultsWidget.routeName: (context) => ResultsWidget(),
+        ReportsWidget.routeName: (context) => ReportsWidget(),
         OrthomosaicPreviewWidget.routeName: (context) =>
             OrthomosaicPreviewWidget(),
         ProcessingFlightsWidget.routeName: (context) =>
