@@ -70,7 +70,7 @@ class _FlightDetailWidgetState extends State<FlightDetailWidget> {
                             Text(
                               Flight.flightOutputFormatter
                                   .format(updatedFlight.date),
-                              style: Theme.of(context).textTheme.body1,
+                              style: Theme.of(context).textTheme.bodyText2,
                             ),
                             SizedBox(height: 20),
                             Text(
@@ -79,7 +79,7 @@ class _FlightDetailWidgetState extends State<FlightDetailWidget> {
                             ),
                             Text(
                               updatedFlight.humanizedProcessingTime(),
-                              style: Theme.of(context).textTheme.body1,
+                              style: Theme.of(context).textTheme.bodyText2,
                             ),
                             SizedBox(height: 20),
                             Text(
@@ -88,7 +88,7 @@ class _FlightDetailWidgetState extends State<FlightDetailWidget> {
                             ),
                             Text(
                               updatedFlight.description,
-                              style: Theme.of(context).textTheme.body1,
+                              style: Theme.of(context).textTheme.bodyText2,
                             ),
                             SizedBox(height: 10),
                             if (updatedFlight.state == FlightState.COMPLETE)

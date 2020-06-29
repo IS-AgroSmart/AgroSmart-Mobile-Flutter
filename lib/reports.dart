@@ -51,7 +51,6 @@ class _ReportsWidgetState extends State<ReportsWidget> {
                 builder: (BuildContext context,
                     AsyncSnapshot<List<FlightResult>> snapshot) {
                   if (snapshot.hasData) {
-                    List<FlightResult> results = snapshot.data;
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: <Widget>[

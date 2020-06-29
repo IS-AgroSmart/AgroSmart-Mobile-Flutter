@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:downloads_path_provider/downloads_path_provider.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_app/helpers.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -23,6 +22,7 @@ class Api {
 
 //      "http://192.168.100.100/api";
 
+  // ignore: cancel_subscriptions
   static StreamSubscription connectivitySubscription;
 
   static Future<bool> tryLogin(String username, String pass) async {
