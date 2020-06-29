@@ -12,6 +12,7 @@ class Flight {
   final int processingTime;
   final double progress;
   final FlightState state;
+  final String camera;
 
   Flight(
       {this.uuid,
@@ -20,7 +21,8 @@ class Flight {
       this.date,
       this.processingTime,
       this.state,
-      this.progress});
+      this.progress,
+      this.camera});
 
   factory Flight.fromMap(Map<String, dynamic> json) {
     print(json);
@@ -36,6 +38,7 @@ class Flight {
       progress: double.parse(
           (json["nodeodm_info"]["progress"]?.toDouble() ?? 0.0)
               .toStringAsFixed(2)),
+      camera : json['camera'],
     );
   }
 

@@ -55,23 +55,40 @@ class _FlightDetailWidgetState extends State<FlightDetailWidget> {
                           physics: const AlwaysScrollableScrollPhysics(),
                           children: <Widget>[
                             Text(
-                              updatedFlight.name,
-                              style: Theme.of(context).textTheme.title,
+                              "Nombre",
+                              style: Theme.of(context).textTheme.headline6,
                             ),
                             Text(
-                              updatedFlight.description,
-                              style: Theme.of(context).textTheme.body1,
+                              updatedFlight.name,
+                              style: Theme.of(context).textTheme.bodyText2,
                             ),
-                            SizedBox(height: 10),
+                            SizedBox(height: 20),
+                            Text(
+                              "Fecha de creación",
+                              style: Theme.of(context).textTheme.headline6,
+                            ),
                             Text(
                               Flight.flightOutputFormatter
                                   .format(updatedFlight.date),
-                              style: Theme.of(context).textTheme.body1,
+                              style: Theme.of(context).textTheme.bodyText2,
                             ),
-                            SizedBox(height: 10),
+                            SizedBox(height: 20),
+                            Text(
+                              "Tiempo de procesamiento",
+                              style: Theme.of(context).textTheme.headline6,
+                            ),
                             Text(
                               updatedFlight.humanizedProcessingTime(),
-                              style: Theme.of(context).textTheme.body1,
+                              style: Theme.of(context).textTheme.bodyText2,
+                            ),
+                            SizedBox(height: 20),
+                            Text(
+                              "Notas",
+                              style: Theme.of(context).textTheme.headline6,
+                            ),
+                            Text(
+                              updatedFlight.description,
+                              style: Theme.of(context).textTheme.bodyText2,
                             ),
                             SizedBox(height: 10),
                             if (updatedFlight.state == FlightState.COMPLETE)

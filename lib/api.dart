@@ -1,11 +1,14 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:downloads_path_provider/downloads_path_provider.dart';
 import 'package:flutter_app/helpers.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 import 'models/flight.dart';
 import 'models/user.dart';
@@ -15,8 +18,12 @@ class Api {
   static const ENTRYPOINT =
 //      "https://391b5808-8024-4864-bda1-992db1ce4e6a.mock.pstmn.io";
       "http://10.0.2.2/api";
+      //"http://283f1ee35efc.ngrok.io/api";
 
 //      "http://192.168.100.100/api";
+
+  // ignore: cancel_subscriptions
+  static StreamSubscription connectivitySubscription;
 
   static Future<bool> tryLogin(String username, String pass) async {
     var response = await http.post(ENTRYPOINT + "/api-auth",
@@ -98,8 +105,7 @@ class Api {
         headers: {"Authorization": "Token " + (await getToken())});
     if (response.statusCode == 200) {
       print("Updating");
-      return Flight.fromMap(
-          json.decode(response.body).cast<String, dynamic>());
+      return Flight.fromMap(json.decode(response.body).cast<String, dynamic>());
     }
     return null;
   }
@@ -127,12 +133,27 @@ class Api {
     return [FlightResult.MODEL3D, FlightResult.ORTHOMOSAIC];
   }
 
+  static Future<void> downloadList(Flight f, Map<String, bool> listDownloads) async {
+
+    Map<String, FlightResult> values = {
+      '3d': FlightResult.MODEL3D,
+      'cloud': FlightResult.CLOUD,
+      'mosaico': FlightResult.ORTHOMOSAIC
+    };
+    listDownloads.forEach((k,v) =>
+    v? download(f, values[k]): null);
+  }
+
   static Future<void> download(Flight f, FlightResult result) async {
     const urls = {
       FlightResult.ORTHOMOSAIC: "orthomosaic.png",
       FlightResult.MODEL3D: "3dmodel"
     };
 
+    var status = await Permission.storage.status;
+    if (!status.isGranted) {
+      await Permission.storage.request();
+    }
     Directory downloadDir = Directory(
         (await DownloadsPathProvider.downloadsDirectory).path +
             "/DroneApp/${f.name}");
@@ -150,5 +171,47 @@ class Api {
       openFileFromNotification:
           true, // click on notification to open downloaded file (for Android)
     );
+  }
+
+  static Future<void> downloadReport(Flight f, Map<String, bool> listReports) async {
+
+    Map<String, String> values = {
+      '3d': '3',
+      'cloud': 'c',
+      'mosaico': 'm',
+      'generales': 'g',
+      'ndvi': 'n',
+    };
+
+    String details = '';
+    listReports.forEach((k,v) =>
+      details += v? values[k] : "" );
+    details += details.length > 0 ? "/" : "";
+
+    Directory downloadDir = Directory(
+        (await DownloadsPathProvider.downloadsDirectory).path +
+            "/DroneApp/${f.name}");
+    if (!downloadDir.existsSync()) await downloadDir.create(recursive: true);
+    String saveDir = downloadDir.path;
+
+    print(saveDir);
+    final url = "$ENTRYPOINT/downloads/${f.uuid}/${details}report.pdf";
+
+    FlutterDownloader.enqueue(
+      url: url,
+      savedDir: saveDir,
+      showNotification: true,
+      // show download progress in status bar (for Android)
+      openFileFromNotification:
+          true, // click on notification to open downloaded file (for Android)
+    );
+  }
+
+  static checkConection() async {
+    connectivitySubscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult connectivityResult) {
+      return connectivityResult == ConnectivityResult.none;
+    });
   }
 }

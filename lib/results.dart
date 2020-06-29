@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/models/flight.dart';
+import 'package:flutter_app/reports.dart';
 
 import 'api.dart';
 import 'orthomosaic_preview.dart';
@@ -20,6 +21,7 @@ class ResultsWidget extends StatefulWidget {
 class _ResultsWidgetState extends State<ResultsWidget> {
   Flight flight;
   Future<List<FlightResult>> _future;
+  Map<String, bool> values = {'3d': true, 'cloud': false, 'mosaico': false};
 
   @override
   void initState() {
@@ -44,17 +46,61 @@ class _ResultsWidgetState extends State<ResultsWidget> {
                 builder: (BuildContext context,
                     AsyncSnapshot<List<FlightResult>> snapshot) {
                   if (snapshot.hasData) {
-                    List<FlightResult> results = snapshot.data;
                     return Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      //crossAxisAlignment: CrossAxisAlignment.stretch,
 //                      mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
-//                        Text(flight.name,
-//                            style: Theme.of(context).textTheme.title),
-                        for (final r in results)
-                          RaisedButton(
-                              child: Text(FlightResultsHelper.description(r)),
-                              onPressed: () async => Api.download(flight, r)),
+                        CheckboxListTile(
+                          title: Text("Modelo 3D"),
+                          value: values['3d'],
+                          onChanged: (newValue) {
+                            setState(() {
+                              values['3d'] = newValue;
+                            });
+                          },
+                          controlAffinity: ListTileControlAffinity
+                              .leading, //  <-- leading Checkbox
+                        ),
+                        CheckboxListTile(
+                          title: Text("Nube de puntos"),
+                          value: values['cloud'],
+                          onChanged: flight.camera != "RGB"? (newValue) {
+                            setState(() {
+                              values['cloud'] = newValue;
+                            });
+                          }: null,
+                          selected: false,
+                          controlAffinity: ListTileControlAffinity
+                              .leading, //  <-- leading Checkbox
+                        ),
+                        CheckboxListTile(
+                          title: Text("Ortomosaico"),
+                          value: values['mosaico'],
+                          onChanged: (newValue) {
+                            setState(() {
+                              values['mosaico'] = newValue;
+                            });
+                          },
+                          controlAffinity: ListTileControlAffinity
+                              .leading, //  <-- leading Checkbox
+                        ),
+                        Row(
+                            mainAxisAlignment:
+                            MainAxisAlignment.spaceEvenly,
+                            children: <Widget>[
+                              RaisedButton(
+                                  child: Text("Descargar"),
+                                  onPressed: () async =>
+                                      Api.downloadList(flight, values)),
+                              RaisedButton(
+                                  child: Text("Reporte"),
+                                  onPressed: () => Navigator.pushNamed(
+                                      context, ReportsWidget.routeName,
+                                      arguments:
+                                          ReportsWidgetArguments(flight))
+                              ),
+                            ]
+                        )
                       ],
                     );
                   } else
