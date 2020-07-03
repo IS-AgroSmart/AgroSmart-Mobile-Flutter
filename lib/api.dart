@@ -15,19 +15,13 @@ import 'models/user.dart';
 import 'orthomosaic_preview.dart';
 
 class Api {
-  static const ENTRYPOINT =
-//      "https://391b5808-8024-4864-bda1-992db1ce4e6a.mock.pstmn.io";
-      "http://10.0.2.2/api";
-      //"http://283f1ee35efc.ngrok.io/api";
-
-//      "http://192.168.100.100/api";
+  static const ENTRYPOINT = "http://10.0.2.2/api";
 
   // ignore: cancel_subscriptions
   static StreamSubscription connectivitySubscription;
 
   static Future<bool> tryLogin(String username, String pass) async {
-    var response = await http.post(ENTRYPOINT + "/api-auth",
-        body: {"username": username, "password": pass});
+    var response = await http.post(ENTRYPOINT + "/api-auth", body: {"username": username, "password": pass});
 
     if (response.statusCode != 200) {
       return false;
@@ -42,6 +36,25 @@ class Api {
     await fetchUserDetails();
 
     return true;
+  }
+
+  static Future<List<String>> tryCreateAccount(String username, String pass, String email) async {
+    var response =
+        await http.post(ENTRYPOINT + "/users/", body: {"username": username, "password": pass, "email": email});
+    if(response.statusCode==201){
+      tryLogin(username, pass);
+      return [];
+    }
+    return _parseErrorDict(utf8.decode(response.bodyBytes));
+  }
+
+  static List<String> _parseErrorDict(String errorJson) {
+    return json
+        .decode(errorJson)
+        .entries
+        .map((e) => e.value.map((msg) => e.key + ": " + msg).join("\n"))
+        .toList()
+        .cast<String>();
   }
 
   static Future<String> getToken() async {
@@ -59,12 +72,9 @@ class Api {
     final prefs = await SharedPreferences.getInstance();
     var username = prefs.getString("username");
 
-    final response = await http.get(ENTRYPOINT + '/users',
-        headers: {"Authorization": "Token " + (await getToken())});
+    final response = await http.get(ENTRYPOINT + '/users', headers: {"Authorization": "Token " + (await getToken())});
     if (response.statusCode == 200) {
-      var users = User.parse(response.body)
-          .where((u) => u.username == username)
-          .toList();
+      var users = User.parse(response.body).where((u) => u.username == username).toList();
       assert(users.length == 1);
       Helpers.loggedInUser = users.first;
       return users.first;
@@ -74,25 +84,20 @@ class Api {
   }
 
   static Future<List<Flight>> fetchCompleteOrErroredFlights() async {
-    return _fetchConditionFlights((flight) =>
-        flight.state == FlightState.COMPLETE ||
-        flight.state == FlightState.ERROR);
+    return _fetchConditionFlights(
+        (flight) => flight.state == FlightState.COMPLETE || flight.state == FlightState.ERROR);
   }
 
   static Future<List<Flight>> fetchProcessingFlights() async {
-    return _fetchConditionFlights(
-        (flight) => flight.state == FlightState.PROCESSING);
+    return _fetchConditionFlights((flight) => flight.state == FlightState.PROCESSING);
   }
 
   static Future<List<Flight>> fetchWaitingFlights() async {
-    return _fetchConditionFlights(
-        (flight) => flight.state == FlightState.WAITING);
+    return _fetchConditionFlights((flight) => flight.state == FlightState.WAITING);
   }
 
-  static Future<List<Flight>> _fetchConditionFlights(
-      bool Function(Flight) predicate) async {
-    final response = await http.get(ENTRYPOINT + '/flights',
-        headers: {"Authorization": "Token " + (await getToken())});
+  static Future<List<Flight>> _fetchConditionFlights(bool Function(Flight) predicate) async {
+    final response = await http.get(ENTRYPOINT + '/flights', headers: {"Authorization": "Token " + (await getToken())});
     if (response.statusCode == 200) {
       return Flight.parseList(response.body).where(predicate).toList();
     } else {
@@ -101,8 +106,8 @@ class Api {
   }
 
   static Future<Flight> fetchFlightDetails(Flight f) async {
-    final response = await http.get(ENTRYPOINT + '/flights/${f.uuid}',
-        headers: {"Authorization": "Token " + (await getToken())});
+    final response =
+        await http.get(ENTRYPOINT + '/flights/${f.uuid}', headers: {"Authorization": "Token " + (await getToken())});
     if (response.statusCode == 200) {
       print("Updating");
       return Flight.fromMap(json.decode(response.body).cast<String, dynamic>());
@@ -124,8 +129,8 @@ class Api {
   }
 
   static Future<bool> tryDeleteFlight(Flight f) async {
-    final response = await http.delete(ENTRYPOINT + '/flights/${f.uuid}/',
-        headers: {"Authorization": "Token " + (await getToken())});
+    final response = await http
+        .delete(ENTRYPOINT + '/flights/${f.uuid}/', headers: {"Authorization": "Token " + (await getToken())});
     return response.statusCode == 201;
   }
 
@@ -134,26 +139,19 @@ class Api {
   }
 
   static Future<void> downloadList(Flight f, Map<String, bool> listDownloads) async {
-
     Map<String, FlightResult> values = {
       '3d': FlightResult.MODEL3D,
       'cloud': FlightResult.CLOUD,
       'mosaico': FlightResult.ORTHOMOSAIC
     };
-    listDownloads.forEach((k,v) =>
-    v? download(f, values[k]): null);
+    listDownloads.forEach((k, v) => v ? download(f, values[k]) : null);
   }
 
   static Future<void> download(Flight f, FlightResult result) async {
-    const urls = {
-      FlightResult.ORTHOMOSAIC: "orthomosaic.png",
-      FlightResult.MODEL3D: "3dmodel"
-    };
+    const urls = {FlightResult.ORTHOMOSAIC: "orthomosaic.png", FlightResult.MODEL3D: "3dmodel"};
 
-    if(!(await _askPermission())) return;
-    Directory downloadDir = Directory(
-        (await DownloadsPathProvider.downloadsDirectory).path +
-            "/DroneApp/${f.name}");
+    if (!(await _askPermission())) return;
+    Directory downloadDir = Directory((await DownloadsPathProvider.downloadsDirectory).path + "/DroneApp/${f.name}");
     if (!downloadDir.existsSync()) await downloadDir.create(recursive: true);
     String saveDir = downloadDir.path;
 //    String saveDir = "$appDataDir/${f.uuid}/${result.toString()}";
@@ -165,13 +163,11 @@ class Api {
       savedDir: saveDir,
       showNotification: true,
       // show download progress in status bar (for Android)
-      openFileFromNotification:
-          true, // click on notification to open downloaded file (for Android)
+      openFileFromNotification: true, // click on notification to open downloaded file (for Android)
     );
   }
 
   static Future<void> downloadReport(Flight f, Map<String, bool> listReports) async {
-
     Map<String, String> values = {
       '3d': '3',
       'cloud': 'c',
@@ -181,14 +177,11 @@ class Api {
     };
 
     String details = '';
-    listReports.forEach((k,v) =>
-      details += v? values[k] : "" );
+    listReports.forEach((k, v) => details += v ? values[k] : "");
     details += details.length > 0 ? "/" : "";
-    if(!(await _askPermission())) return;
+    if (!(await _askPermission())) return;
 
-    Directory downloadDir = Directory(
-        (await DownloadsPathProvider.downloadsDirectory).path +
-            "/DroneApp/${f.name}");
+    Directory downloadDir = Directory((await DownloadsPathProvider.downloadsDirectory).path + "/DroneApp/${f.name}");
     if (!downloadDir.existsSync()) await downloadDir.create(recursive: true);
     String saveDir = downloadDir.path;
 
@@ -200,8 +193,7 @@ class Api {
       savedDir: saveDir,
       showNotification: true,
       // show download progress in status bar (for Android)
-      openFileFromNotification:
-          true, // click on notification to open downloaded file (for Android)
+      openFileFromNotification: true, // click on notification to open downloaded file (for Android)
     );
   }
 
@@ -214,9 +206,7 @@ class Api {
   }
 
   static checkConection() async {
-    connectivitySubscription = Connectivity()
-        .onConnectivityChanged
-        .listen((ConnectivityResult connectivityResult) {
+    connectivitySubscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult connectivityResult) {
       return connectivityResult == ConnectivityResult.none;
     });
   }

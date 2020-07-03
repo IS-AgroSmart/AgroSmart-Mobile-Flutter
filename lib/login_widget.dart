@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/completed_flights_widget.dart';
+import 'package:flutter_app/create_account_widget.dart';
 import 'api.dart';
 
 class LoginWidget extends StatelessWidget {
@@ -33,11 +34,9 @@ class _LoginFormState extends State<LoginForm> {
     return null;
   }
 
-  String usernameValidator(value) =>
-      isNotEmptyValidator('Escriba un nombre de usuario', value);
+  String usernameValidator(value) => isNotEmptyValidator('Escriba un nombre de usuario', value);
 
-  String passwordValidator(value) =>
-      isNotEmptyValidator("Escriba una contraseña", value);
+  String passwordValidator(value) => isNotEmptyValidator("Escriba una contraseña", value);
 
   @override
   Widget build(BuildContext context) {
@@ -69,12 +68,15 @@ class _LoginFormState extends State<LoginForm> {
                     var success = await Api.tryLogin(_username, _pass);
                     setState(() => _success = success);
                     // If success == true, login was OK. Transition to Flights screen
-                    if (_success)
-                      Navigator.pushReplacementNamed(
-                          context, CompletedFlightsWidget.routeName);
+                    if (_success) Navigator.pushReplacementNamed(context, CompletedFlightsWidget.routeName);
                   }
                 },
                 child: Text('Iniciar sesión'),
+              ),
+              Container(height: 10),
+              InkWell(
+                onTap: () => Navigator.pushReplacementNamed(context, CreateAccountWidget.routeName),
+                child: Text('Crear cuenta'),
               ),
             ])));
   }
