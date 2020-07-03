@@ -6,6 +6,8 @@ class User {
   User({this.username, this.name, this.email});
 
   factory User.fromMap(Map<String, dynamic> json) {
+    if (!json.containsKey("username")) throw ArgumentError("username");
+    if (!json.containsKey("email")) throw ArgumentError("email");
     return User(
       username: json["username"],
       email: json["email"],
