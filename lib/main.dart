@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/completed_flights_widget.dart';
+import 'package:flutter_app/create_account_successful_widget.dart';
+import 'package:flutter_app/create_account_widget.dart';
 import 'package:flutter_app/login_widget.dart';
 import 'package:flutter_app/new_flight.dart';
 import 'package:flutter_app/orthomosaic_preview.dart';
@@ -19,7 +21,8 @@ void main() async {
   try {
     if ((await Api.getToken()) != null) await Api.fetchUserDetails();
     runApp(MyNewApp());
-  }catch(Exception) {
+  } on Exception catch(e) {
+    print(e);
     print("not connected");
   }
 }
@@ -39,13 +42,13 @@ class _AppState extends State<MyNewApp> {
       home: _loggedIn ? CompletedFlightsWidget() : LoginWidget(),
       routes: {
         LoginWidget.routeName: (context) => LoginWidget(),
+        CreateAccountWidget.routeName: (context) => CreateAccountWidget(),
+        CreateAccountSuccessfulWidget.routeName: (context) => CreateAccountSuccessfulWidget(),
         CompletedFlightsWidget.routeName: (context) => CompletedFlightsWidget(),
         ResultsWidget.routeName: (context) => ResultsWidget(),
         ReportsWidget.routeName: (context) => ReportsWidget(),
-        OrthomosaicPreviewWidget.routeName: (context) =>
-            OrthomosaicPreviewWidget(),
-        ProcessingFlightsWidget.routeName: (context) =>
-            ProcessingFlightsWidget(),
+        OrthomosaicPreviewWidget.routeName: (context) => OrthomosaicPreviewWidget(),
+        ProcessingFlightsWidget.routeName: (context) => ProcessingFlightsWidget(),
         WaitingFlightsWidget.routeName: (context) => WaitingFlightsWidget(),
         NewFlightWidget.routeName: (context) => NewFlightWidget(),
       },
@@ -56,7 +59,6 @@ class _AppState extends State<MyNewApp> {
   @override
   void initState() {
     super.initState();
-    Api.getToken()
-        .then((result) => setState(() => _loggedIn = (result != null)));
+    Api.getToken().then((result) => setState(() => _loggedIn = (result != null)));
   }
 }
