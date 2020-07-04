@@ -13,6 +13,7 @@ class CompletedFlightsWidget extends AbstractFlightsWidget {
 
 class _CompletedFlightsState extends AbstractFlightsState {
   final appTitle = "Vuelos completos";
+  final deleteMessage = "¿Confirma que desea eliminar el vuelo?\n Podrá recuperarlo durante 30 días.";
 
   @override
   void initState() {

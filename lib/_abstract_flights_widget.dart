@@ -22,6 +22,9 @@ abstract class AbstractFlightsState extends State<AbstractFlightsWidget> {
 
   String appTitle;
 
+  bool detailOnClick = true;
+  String deleteMessage = "";
+
   @override
   void initState() {
     flightsFuture = flightsFutureCallable();
@@ -43,8 +46,7 @@ abstract class AbstractFlightsState extends State<AbstractFlightsWidget> {
         ),
         drawer: AppDrawer(),
         floatingActionButton: FloatingActionButton(
-          onPressed: () =>
-              Navigator.pushNamed(context, NewFlightWidget.routeName),
+          onPressed: () => Navigator.pushNamed(context, NewFlightWidget.routeName),
           child: Icon(Icons.add),
         ),
         body: StreamBuilder<List<Flight>>(
@@ -89,52 +91,45 @@ abstract class AbstractFlightsState extends State<AbstractFlightsWidget> {
                       }
                       return ListTile(
                           title: Text('${flight.name}'),
-                          subtitle: Text(
-                              Flight.flightOutputFormatter.format(flight.date)),
+                          subtitle: Text(Flight.flightOutputFormatter.format(flight.date)),
                           leading: icon,
-                          trailing: IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () => showDialog(
-                              context: context,
-                              builder: (context) => AlertDialog(
-                                title: Text("Confirmar eliminación"),
-                                content: Text(
-                                    "¿Confirma que desea eliminar el vuelo ${flight.name}?\nEsta acción no se puede deshacer."),
-                                actions: <Widget>[
-                                  new FlatButton(
-                                    child: new Text("Cancelar"),
-                                    onPressed: () {
-                                      Navigator.of(context).pop();
-                                    },
-                                  ),
-                                  new FlatButton(
-                                    child: new Text(
-                                      "Eliminar",
-                                      style: TextStyle(color: Colors.red),
+                          trailing: deleteMessage.isNotEmpty
+                              ? IconButton(
+                                  icon: Icon(Icons.delete),
+                                  onPressed: () => showDialog(
+                                    context: context,
+                                    builder: (context) => AlertDialog(
+                                      title: Text("Confirmar eliminación"),
+                                      content: Text(deleteMessage),
+                                      actions: <Widget>[
+                                        new FlatButton(
+                                          child: new Text("Cancelar"),
+                                          onPressed: () {
+                                            Navigator.of(context).pop();
+                                          },
+                                        ),
+                                        new FlatButton(
+                                          child: new Text(
+                                            "Eliminar",
+                                            style: TextStyle(color: Colors.red),
+                                          ),
+                                          onPressed: () {
+                                            Scaffold.of(_context)
+                                                .showSnackBar(SnackBar(content: Text('Eliminando vuelo. Espere...')));
+                                            Navigator.of(context).pop();
+                                            Api.tryDeleteFlight(flight).then((_) async => _loadFlights());
+                                          },
+                                        ),
+                                      ],
                                     ),
-                                    onPressed: () {
-                                      Scaffold.of(_context).showSnackBar(SnackBar(
-                                          content: Text(
-                                              'Eliminando vuelo. Espere...')));
-//                                      Api.tryDeleteFlight(flight).then((_) =>
-//                                          Navigator.of(context)
-//                                              .pushReplacementNamed(
-//                                                  this.widget.routeNameFunc()));
-                                      Navigator.of(context).pop();
-                                      Api.tryDeleteFlight(flight)
-                                          .then((_) async => _loadFlights());
-                                    },
                                   ),
-                                ],
-                              ),
-                            ),
-                          ),
+                                )
+                              // HACK: Placeholder to NOT show Delete button
+                              : Container(width: 1, height: 1),
                           onTap: () {
-                            Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) =>
-                                        FlightDetailWidget(flight: flight)));
+                            if (detailOnClick)
+                              Navigator.push(
+                                  context, MaterialPageRoute(builder: (context) => FlightDetailWidget(flight: flight)));
                           });
                     },
                   ));
