@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/completed_flights_widget.dart';
 import 'package:flutter_app/create_account_successful_widget.dart';
 import 'package:flutter_app/create_account_widget.dart';
+import 'package:flutter_app/deleted_flights_widget.dart';
 import 'package:flutter_app/login_widget.dart';
 import 'package:flutter_app/new_flight.dart';
 import 'package:flutter_app/orthomosaic_preview.dart';
@@ -21,7 +22,7 @@ void main() async {
   try {
     if ((await Api.getToken()) != null) await Api.fetchUserDetails();
     runApp(MyNewApp());
-  } on Exception catch(e) {
+  } on Exception catch (e) {
     print(e);
     print("not connected");
   }
@@ -50,6 +51,7 @@ class _AppState extends State<MyNewApp> {
         OrthomosaicPreviewWidget.routeName: (context) => OrthomosaicPreviewWidget(),
         ProcessingFlightsWidget.routeName: (context) => ProcessingFlightsWidget(),
         WaitingFlightsWidget.routeName: (context) => WaitingFlightsWidget(),
+        DeletedFlightsWidget.routeName: (context) => DeletedFlightsWidget(),
         NewFlightWidget.routeName: (context) => NewFlightWidget(),
       },
 //      theme: ThemeData(primarySwatch: Colors.green),

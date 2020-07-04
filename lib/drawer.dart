@@ -8,6 +8,7 @@ import 'package:flutter_app/waiting_flights_widget.dart';
 import 'package:prefs_config/prefs_config.dart';
 
 import 'api.dart';
+import 'deleted_flights_widget.dart';
 
 class AppDrawer extends Drawer {
   @override
@@ -44,6 +45,12 @@ class AppDrawer extends Drawer {
             leading: Icon(Icons.alarm),
             onTap: () => Navigator.pushReplacementNamed(
                 context, WaitingFlightsWidget.routeName),
+          ),
+          ListTile(
+            title: Text("Vuelos eliminados"),
+            leading: Icon(Icons.delete),
+            onTap: () => Navigator.pushReplacementNamed(
+                context, DeletedFlightsWidget.routeName),
           ),
           Divider(),
           ListTile(

@@ -41,7 +41,7 @@ class Api {
   static Future<List<String>> tryCreateAccount(String username, String pass, String email) async {
     var response =
         await http.post(ENTRYPOINT + "/users/", body: {"username": username, "password": pass, "email": email});
-    if(response.statusCode==201){
+    if (response.statusCode == 201) {
       tryLogin(username, pass);
       return [];
     }
@@ -94,6 +94,16 @@ class Api {
 
   static Future<List<Flight>> fetchWaitingFlights() async {
     return _fetchConditionFlights((flight) => flight.state == FlightState.WAITING);
+  }
+
+  static Future<List<Flight>> fetchDeletedFlights() async {
+    final response =
+        await http.get(ENTRYPOINT + '/flights/deleted', headers: {"Authorization": "Token " + (await getToken())});
+    if (response.statusCode == 200) {
+      return Flight.parseList(response.body).toList();
+    } else {
+      throw Exception(response.body);
+    }
   }
 
   static Future<List<Flight>> _fetchConditionFlights(bool Function(Flight) predicate) async {
