@@ -15,7 +15,7 @@ import 'models/user.dart';
 import 'orthomosaic_preview.dart';
 
 class Api {
-  static const ENTRYPOINT = "http://10.0.2.2/api";
+  static const ENTRYPOINT = "http://f4e9b608f27c.ngrok.io/api";
 
   // ignore: cancel_subscriptions
   static StreamSubscription connectivitySubscription;
