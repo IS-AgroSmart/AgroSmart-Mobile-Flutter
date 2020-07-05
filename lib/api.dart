@@ -15,13 +15,15 @@ import 'models/user.dart';
 import 'orthomosaic_preview.dart';
 
 class Api {
-  static const ENTRYPOINT = "http://f4e9b608f27c.ngrok.io/api";
-
+  static const ENTRYPOINTG = 'http://94ff6c0a33d2.ngrok.io/';
+  static const ENTRYPOINT = ENTRYPOINTG + "api";
+  static const ENTRYPOINTNODE = ENTRYPOINTG + "nodeodm/";
   // ignore: cancel_subscriptions
   static StreamSubscription connectivitySubscription;
 
   static Future<bool> tryLogin(String username, String pass) async {
-    var response = await http.post(ENTRYPOINT + "/api-auth", body: {"username": username, "password": pass});
+    var response = await http.post(ENTRYPOINT + "/api-auth",
+        body: {"username": username, "password": pass});
 
     if (response.statusCode != 200) {
       return false;
@@ -38,9 +40,10 @@ class Api {
     return true;
   }
 
-  static Future<List<String>> tryCreateAccount(String username, String pass, String email) async {
-    var response =
-        await http.post(ENTRYPOINT + "/users/", body: {"username": username, "password": pass, "email": email});
+  static Future<List<String>> tryCreateAccount(
+      String username, String pass, String email) async {
+    var response = await http.post(ENTRYPOINT + "/users/",
+        body: {"username": username, "password": pass, "email": email});
     if (response.statusCode == 201) {
       tryLogin(username, pass);
       return [];
@@ -72,9 +75,12 @@ class Api {
     final prefs = await SharedPreferences.getInstance();
     var username = prefs.getString("username");
 
-    final response = await http.get(ENTRYPOINT + '/users', headers: {"Authorization": "Token " + (await getToken())});
+    final response = await http.get(ENTRYPOINT + '/users',
+        headers: {"Authorization": "Token " + (await getToken())});
     if (response.statusCode == 200) {
-      var users = User.parse(response.body).where((u) => u.username == username).toList();
+      var users = User.parse(response.body)
+          .where((u) => u.username == username)
+          .toList();
       assert(users.length == 1);
       Helpers.loggedInUser = users.first;
       return users.first;
@@ -84,21 +90,30 @@ class Api {
   }
 
   static Future<List<Flight>> fetchCompleteOrErroredFlights() async {
-    return _fetchConditionFlights(
-        (flight) => flight.state == FlightState.COMPLETE || flight.state == FlightState.ERROR);
+    return _fetchConditionFlights((flight) =>
+        flight.state == FlightState.COMPLETE ||
+        flight.state == FlightState.ERROR);
   }
 
   static Future<List<Flight>> fetchProcessingFlights() async {
-    return _fetchConditionFlights((flight) => flight.state == FlightState.PROCESSING);
+    return _fetchConditionFlights(
+        (flight) => flight.state == FlightState.PROCESSING);
+  }
+
+  static Future<String> cancelProcessingFlights(Flight flight) async {
+    var details =
+        http.post(ENTRYPOINTNODE + "/task/cancel", body: {"uuid": flight.uuid});
+    return details.toString();
   }
 
   static Future<List<Flight>> fetchWaitingFlights() async {
-    return _fetchConditionFlights((flight) => flight.state == FlightState.WAITING);
+    return _fetchConditionFlights(
+        (flight) => flight.state == FlightState.WAITING);
   }
 
   static Future<List<Flight>> fetchDeletedFlights() async {
-    final response =
-        await http.get(ENTRYPOINT + '/flights/deleted', headers: {"Authorization": "Token " + (await getToken())});
+    final response = await http.get(ENTRYPOINT + '/flights/deleted',
+        headers: {"Authorization": "Token " + (await getToken())});
     if (response.statusCode == 200) {
       return Flight.parseList(response.body).toList();
     } else {
@@ -106,8 +121,10 @@ class Api {
     }
   }
 
-  static Future<List<Flight>> _fetchConditionFlights(bool Function(Flight) predicate) async {
-    final response = await http.get(ENTRYPOINT + '/flights', headers: {"Authorization": "Token " + (await getToken())});
+  static Future<List<Flight>> _fetchConditionFlights(
+      bool Function(Flight) predicate) async {
+    final response = await http.get(ENTRYPOINT + '/flights',
+        headers: {"Authorization": "Token " + (await getToken())});
     if (response.statusCode == 200) {
       return Flight.parseList(response.body).where(predicate).toList();
     } else {
@@ -116,8 +133,8 @@ class Api {
   }
 
   static Future<Flight> fetchFlightDetails(Flight f) async {
-    final response =
-        await http.get(ENTRYPOINT + '/flights/${f.uuid}', headers: {"Authorization": "Token " + (await getToken())});
+    final response = await http.get(ENTRYPOINT + '/flights/${f.uuid}',
+        headers: {"Authorization": "Token " + (await getToken())});
     if (response.statusCode == 200) {
       print("Updating");
       return Flight.fromMap(json.decode(response.body).cast<String, dynamic>());
@@ -139,8 +156,8 @@ class Api {
   }
 
   static Future<bool> tryDeleteFlight(Flight f) async {
-    final response = await http
-        .delete(ENTRYPOINT + '/flights/${f.uuid}/', headers: {"Authorization": "Token " + (await getToken())});
+    final response = await http.delete(ENTRYPOINT + '/flights/${f.uuid}/',
+        headers: {"Authorization": "Token " + (await getToken())});
     return response.statusCode == 201;
   }
 
@@ -148,7 +165,8 @@ class Api {
     return [FlightResult.MODEL3D, FlightResult.ORTHOMOSAIC];
   }
 
-  static Future<void> downloadList(Flight f, Map<String, bool> listDownloads) async {
+  static Future<void> downloadList(
+      Flight f, Map<String, bool> listDownloads) async {
     Map<String, FlightResult> values = {
       '3d': FlightResult.MODEL3D,
       'cloud': FlightResult.CLOUD,
@@ -158,10 +176,16 @@ class Api {
   }
 
   static Future<void> download(Flight f, FlightResult result) async {
-    const urls = {FlightResult.ORTHOMOSAIC: "orthomosaic.png", FlightResult.MODEL3D: "3dmodel", FlightResult.CLOUD: "foo"};
+    const urls = {
+      FlightResult.ORTHOMOSAIC: "orthomosaic.png",
+      FlightResult.MODEL3D: "3dmodel",
+      FlightResult.CLOUD: "foo"
+    };
 
     if (!(await _askPermission())) return;
-    Directory downloadDir = Directory((await DownloadsPathProvider.downloadsDirectory).path + "/DroneApp/${f.name}");
+    Directory downloadDir = Directory(
+        (await DownloadsPathProvider.downloadsDirectory).path +
+            "/DroneApp/${f.name}");
     if (!downloadDir.existsSync()) await downloadDir.create(recursive: true);
     String saveDir = downloadDir.path;
 //    String saveDir = "$appDataDir/${f.uuid}/${result.toString()}";
@@ -173,11 +197,13 @@ class Api {
       savedDir: saveDir,
       showNotification: true,
       // show download progress in status bar (for Android)
-      openFileFromNotification: true, // click on notification to open downloaded file (for Android)
+      openFileFromNotification:
+          true, // click on notification to open downloaded file (for Android)
     );
   }
 
-  static Future<void> downloadReport(Flight f, Map<String, bool> listReports) async {
+  static Future<void> downloadReport(
+      Flight f, Map<String, bool> listReports) async {
     Map<String, String> values = {
       '3d': '3',
       'cloud': 'c',
@@ -191,7 +217,9 @@ class Api {
     details += details.length > 0 ? "/" : "";
     if (!(await _askPermission())) return;
 
-    Directory downloadDir = Directory((await DownloadsPathProvider.downloadsDirectory).path + "/DroneApp/${f.name}");
+    Directory downloadDir = Directory(
+        (await DownloadsPathProvider.downloadsDirectory).path +
+            "/DroneApp/${f.name}");
     if (!downloadDir.existsSync()) await downloadDir.create(recursive: true);
     String saveDir = downloadDir.path;
 
@@ -203,7 +231,8 @@ class Api {
       savedDir: saveDir,
       showNotification: true,
       // show download progress in status bar (for Android)
-      openFileFromNotification: true, // click on notification to open downloaded file (for Android)
+      openFileFromNotification:
+          true, // click on notification to open downloaded file (for Android)
     );
   }
 
@@ -216,7 +245,9 @@ class Api {
   }
 
   static checkConection() async {
-    connectivitySubscription = Connectivity().onConnectivityChanged.listen((ConnectivityResult connectivityResult) {
+    connectivitySubscription = Connectivity()
+        .onConnectivityChanged
+        .listen((ConnectivityResult connectivityResult) {
       return connectivityResult == ConnectivityResult.none;
     });
   }

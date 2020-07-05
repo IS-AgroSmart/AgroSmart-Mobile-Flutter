@@ -121,13 +121,13 @@ class _FlightDetailWidgetState extends State<FlightDetailWidget> {
                                   SizedBox(height: 10),
                                   LinearProgressIndicator(
                                     value: updatedFlight.progress / 100.0,
-                                  )
+                                  ),
+                                  RaisedButton(
+                                    onPressed: () async => _cancelFlight(),
+                                    child: Text('Cancelar'),
+                                    color: Colors.red,
+                                  ),
                                 ],
-                              ),
-                              RaisedButton(
-                                onPressed: () async => _cancelFlight(),
-                                child: Text('Cancelar'),
-                                color:Colors.red,
                               ),
                           ],
                         )));
@@ -135,40 +135,43 @@ class _FlightDetailWidgetState extends State<FlightDetailWidget> {
                 return Center(child: CircularProgressIndicator());
             }));
   }
-  
-Future<void> _cancelFlight() async{
-  return showDialog<void>(
-    context: context,
-    barrierDismissible: false, // user must tap button!
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: Text('Esta a punto de cancelar el procesamiento..'),
-        content: SingleChildScrollView(
-          child: ListBody(
-            children: <Widget>[
-              Text('¿Realmente desea cancelar el procesamiento del vuelo?'),
-              Text('Esta apunto de cancelar el procesamiento..'),
-            ],
+
+  Future<void> _cancelFlight() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false, // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Esta a punto de cancelar el procesamiento..'),
+          content: SingleChildScrollView(
+            child: ListBody(
+              children: <Widget>[
+                Text('¿Realmente desea cancelar el procesamiento del vuelo?'),
+              ],
+            ),
           ),
-        ),
-        actions: <Widget>[
-          FlatButton(
-            child: Text('Cancelar'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          FlatButton(
-            child: Text('Aceptar'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-        ],
-      );
-    },
-  );
-}
+          actions: <Widget>[
+            FlatButton(
+              child: Text('No'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            FlatButton(
+              child: Text('Si'),
+              textColor: Colors.red,
+              onPressed: () async => _cancelFlightAction(),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  void _cancelFlightAction() async {
+    Api.cancelProcessingFlights(this.flight);
+    Navigator.of(context).pop();
+  }
 
   void _updateFlight() async {
     var flights = await Api.fetchFlightDetails(this.flight);
