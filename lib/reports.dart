@@ -36,8 +36,7 @@ class _ReportsWidgetState extends State<ReportsWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final ReportsWidgetArguments args =
-        ModalRoute.of(context).settings.arguments;
+    final ReportsWidgetArguments args = ModalRoute.of(context).settings.arguments;
     flight = args.flight;
 
     return Scaffold(
@@ -48,8 +47,7 @@ class _ReportsWidgetState extends State<ReportsWidget> {
             padding: const EdgeInsets.all(16.0),
             child: FutureBuilder<List<FlightResult>>(
                 future: _future,
-                builder: (BuildContext context,
-                    AsyncSnapshot<List<FlightResult>> snapshot) {
+                builder: (BuildContext context, AsyncSnapshot<List<FlightResult>> snapshot) {
                   if (snapshot.hasData) {
                     return Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -66,7 +64,7 @@ class _ReportsWidgetState extends State<ReportsWidget> {
                               values['generales'] = newValue;
                             });
                           },
-                          controlAffinity: ListTileControlAffinity.leading,  //  <-- leading Checkbox
+                          controlAffinity: ListTileControlAffinity.leading, //  <-- leading Checkbox
                         ),
                         CheckboxListTile(
                           title: Text("Ortomosaico"),
@@ -76,42 +74,71 @@ class _ReportsWidgetState extends State<ReportsWidget> {
                               values['mosaico'] = newValue;
                             });
                           },
-                          controlAffinity: ListTileControlAffinity.leading,  //  <-- leading Checkbox
+                          controlAffinity: ListTileControlAffinity.leading, //  <-- leading Checkbox
                         ),
                         CheckboxListTile(
                           title: Text("Detalles Nube de puntos"),
                           value: values['cloud'],
-                          onChanged: flight.camera != "RGB"? (newValue) {
-                            setState(() {
-                              values['cloud'] = newValue;
-                            });
-                          }: null,
+//                          onChanged: (flight.camera != "RGB" || false)  ? (newValue) {
+//                            setState(() {
+//                              values['cloud'] = newValue;
+//                            });
+//                          }: null,
+                          onChanged: null,
+                          // Disables the checkbox
                           selected: false,
-                          controlAffinity: ListTileControlAffinity.leading,  //  <-- leading Checkbox
+                          controlAffinity: ListTileControlAffinity.leading, //  <-- leading Checkbox
                         ),
                         CheckboxListTile(
                           title: Text("Detalles Modelo 3D"),
                           value: values['3d'],
-                          onChanged: flight.camera != "RGB"? (newValue) {
-                            setState(() {
-                              values['3d'] = newValue;
-                            });
-                          }: null,
-                          controlAffinity: ListTileControlAffinity.leading,  //  <-- leading Checkbox
+//                          onChanged: flight.camera != "RGB"
+//                              ? (newValue) {
+//                                  setState(() {
+//                                    values['3d'] = newValue;
+//                                  });
+//                                }
+//                              : null,
+                          onChanged: null, // Disables the checkbox
+                          controlAffinity: ListTileControlAffinity.leading, //  <-- leading Checkbox
                         ),
                         CheckboxListTile(
                           title: Text("Ortomosaico NDVI"),
                           value: values['ndvi'],
-                          onChanged: flight.camera != "RGB"? (newValue) {
-                            setState(() {
-                              values['ndvi'] = newValue;
-                            });
-                          }: null,
-                          controlAffinity: ListTileControlAffinity.leading,  //  <-- leading Checkbox
+//                          onChanged: flight.camera != "RGB"
+//                              ? (newValue) {
+//                                  setState(() {
+//                                    values['ndvi'] = newValue;
+//                                  });
+//                                }
+//                              : null,
+                          onChanged: null, // Disables the checkbox
+                          controlAffinity: ListTileControlAffinity.leading, //  <-- leading Checkbox
                         ),
                         RaisedButton(
                             child: Text("Reporte"),
-                            onPressed: () async => Api.downloadReport(flight, values)),
+                            onPressed: () async {
+                              if (values.values.every((e) => !e)) { // If every value of dict is false (i.e., no sections are selected)
+                                showDialog<void>(
+                                    context: context,
+                                    barrierDismissible: true,
+                                    builder: (BuildContext context) {
+                                      return AlertDialog(
+                                        title: Text("Error"),
+                                        content: Text("Escoja al menos una sección para el reporte"),
+                                        actions: <Widget>[
+                                          FlatButton(
+                                            child: Text('OK'),
+                                            onPressed: () {
+                                              Navigator.of(context).pop();
+                                            },
+                                          ),
+                                        ],
+                                      );
+                                    });
+                              } else
+                                Api.downloadReport(flight, values);
+                            }),
                       ],
                     );
                   } else
@@ -119,4 +146,3 @@ class _ReportsWidgetState extends State<ReportsWidget> {
                 })));
   }
 }
-

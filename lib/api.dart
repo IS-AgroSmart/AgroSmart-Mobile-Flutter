@@ -158,7 +158,7 @@ class Api {
   }
 
   static Future<void> download(Flight f, FlightResult result) async {
-    const urls = {FlightResult.ORTHOMOSAIC: "orthomosaic.png", FlightResult.MODEL3D: "3dmodel"};
+    const urls = {FlightResult.ORTHOMOSAIC: "orthomosaic.png", FlightResult.MODEL3D: "3dmodel", FlightResult.CLOUD: "foo"};
 
     if (!(await _askPermission())) return;
     Directory downloadDir = Directory((await DownloadsPathProvider.downloadsDirectory).path + "/DroneApp/${f.name}");

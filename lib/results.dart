@@ -61,18 +61,18 @@ class _ResultsWidgetState extends State<ResultsWidget> {
                           controlAffinity: ListTileControlAffinity
                               .leading, //  <-- leading Checkbox
                         ),
-                        CheckboxListTile(
-                          title: Text("Nube de puntos"),
-                          value: values['cloud'],
-                          onChanged: flight.camera != "RGB"? (newValue) {
-                            setState(() {
-                              values['cloud'] = newValue;
-                            });
-                          }: null,
-                          selected: false,
-                          controlAffinity: ListTileControlAffinity
-                              .leading, //  <-- leading Checkbox
-                        ),
+//                        CheckboxListTile(
+//                          title: Text("Nube de puntos"),
+//                          value: values['cloud'],
+//                          onChanged: flight.camera != "RGB"? (newValue) {
+//                            setState(() {
+//                              values['cloud'] = newValue;
+//                            });
+//                          }: null,
+//                          selected: false,
+//                          controlAffinity: ListTileControlAffinity
+//                              .leading, //  <-- leading Checkbox
+//                        ),
                         CheckboxListTile(
                           title: Text("Ortomosaico"),
                           value: values['mosaico'],
