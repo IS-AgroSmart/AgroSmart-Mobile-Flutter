@@ -46,7 +46,8 @@ abstract class AbstractFlightsState extends State<AbstractFlightsWidget> {
         ),
         drawer: AppDrawer(),
         floatingActionButton: FloatingActionButton(
-          onPressed: () => Navigator.pushNamed(context, NewFlightWidget.routeName),
+          onPressed: () =>
+              Navigator.pushNamed(context, NewFlightWidget.routeName),
           child: Icon(Icons.add),
         ),
         body: StreamBuilder<List<Flight>>(
@@ -74,6 +75,9 @@ abstract class AbstractFlightsState extends State<AbstractFlightsWidget> {
                         case FlightState.ERROR:
                           icon = Icon(Icons.error);
                           break;
+                        case FlightState.CANCELED:
+                          icon = Icon(Icons.cancel);
+                          break;
                         case FlightState.PROCESSING:
                           icon = Container(
                             width: 25,
@@ -91,7 +95,8 @@ abstract class AbstractFlightsState extends State<AbstractFlightsWidget> {
                       }
                       return ListTile(
                           title: Text('${flight.name}'),
-                          subtitle: Text(Flight.flightOutputFormatter.format(flight.date)),
+                          subtitle: Text(
+                              Flight.flightOutputFormatter.format(flight.date)),
                           leading: icon,
                           trailing: deleteMessage.isNotEmpty
                               ? IconButton(
@@ -114,10 +119,13 @@ abstract class AbstractFlightsState extends State<AbstractFlightsWidget> {
                                             style: TextStyle(color: Colors.red),
                                           ),
                                           onPressed: () {
-                                            Scaffold.of(_context)
-                                                .showSnackBar(SnackBar(content: Text('Eliminando vuelo. Espere...')));
+                                            Scaffold.of(_context).showSnackBar(
+                                                SnackBar(
+                                                    content: Text(
+                                                        'Eliminando vuelo. Espere...')));
                                             Navigator.of(context).pop();
-                                            Api.tryDeleteFlight(flight).then((_) async => _loadFlights());
+                                            Api.tryDeleteFlight(flight).then(
+                                                (_) async => _loadFlights());
                                           },
                                         ),
                                       ],
@@ -126,10 +134,16 @@ abstract class AbstractFlightsState extends State<AbstractFlightsWidget> {
                                 )
                               // HACK: Placeholder to NOT show Delete button
                               : Container(width: 1, height: 1),
-                          onTap: () {
-                            if (detailOnClick)
-                              Navigator.push(
-                                  context, MaterialPageRoute(builder: (context) => FlightDetailWidget(flight: flight)));
+                          onTap: () async {
+                            if (detailOnClick) {
+                              // await Navigator.push returns when FlightDetailWidget gets popped, time to reload flights
+                              await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          FlightDetailWidget(flight: flight)));
+                              _loadFlights();
+                            }
                           });
                     },
                   ));

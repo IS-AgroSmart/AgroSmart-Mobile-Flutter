@@ -15,9 +15,10 @@ import 'models/user.dart';
 import 'orthomosaic_preview.dart';
 
 class Api {
-  static const ENTRYPOINTG = 'http://94ff6c0a33d2.ngrok.io/';
+  static const ENTRYPOINTG = 'http://10.0.2.2/';
   static const ENTRYPOINT = ENTRYPOINTG + "api";
   static const ENTRYPOINTNODE = ENTRYPOINTG + "nodeodm/";
+
   // ignore: cancel_subscriptions
   static StreamSubscription connectivitySubscription;
 
@@ -92,7 +93,8 @@ class Api {
   static Future<List<Flight>> fetchCompleteOrErroredFlights() async {
     return _fetchConditionFlights((flight) =>
         flight.state == FlightState.COMPLETE ||
-        flight.state == FlightState.ERROR);
+        flight.state == FlightState.ERROR ||
+        flight.state == FlightState.CANCELED);
   }
 
   static Future<List<Flight>> fetchProcessingFlights() async {
@@ -100,10 +102,10 @@ class Api {
         (flight) => flight.state == FlightState.PROCESSING);
   }
 
-  static Future<String> cancelProcessingFlights(Flight flight) async {
+  static Future<int> cancelProcessingFlight(Flight flight) async {
     var details =
-        http.post(ENTRYPOINTNODE + "/task/cancel", body: {"uuid": flight.uuid});
-    return details.toString();
+        await http.post(ENTRYPOINTNODE + "/task/cancel", body: {"uuid": flight.uuid});
+    return details.statusCode;
   }
 
   static Future<List<Flight>> fetchWaitingFlights() async {

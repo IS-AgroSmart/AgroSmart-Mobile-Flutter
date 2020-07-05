@@ -25,7 +25,6 @@ class Flight {
       this.camera});
 
   factory Flight.fromMap(Map<String, dynamic> json) {
-    print(json);
     return Flight(
       uuid: json["uuid"],
       name: json['name'],
@@ -50,18 +49,18 @@ class Flight {
   String humanizedProcessingTime() => _humanize(this.processingTime);
 
   String humanizeTimeLeft() {
-    final timeLeft = processingTime * (100 - progress) ~/ 100;
+    final timeLeft = (processingTime / (progress / 100) - processingTime).round();
     return _humanize(timeLeft);
   }
 
-  String _humanize(int time) {
-    var hours = time ~/ (60 * 60);
-    var minutes = (time - hours * 60 * 60) ~/ 60;
+  String _humanize(int seconds) {
+    var hours = seconds ~/ (60 * 60);
+    var minutes = (seconds - hours * 60 * 60) ~/ 60;
     return "$hours h, $minutes min";
   }
 }
 
-enum FlightState { WAITING, PROCESSING, COMPLETE, ERROR }
+enum FlightState { WAITING, PROCESSING, COMPLETE, ERROR, CANCELED }
 
 enum Camera { RGB, MICASENSE }
 

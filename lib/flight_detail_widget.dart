@@ -142,7 +142,7 @@ class _FlightDetailWidgetState extends State<FlightDetailWidget> {
       barrierDismissible: false, // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Esta a punto de cancelar el procesamiento..'),
+          title: Text('Está a punto de cancelar el procesamiento'),
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
@@ -158,7 +158,7 @@ class _FlightDetailWidgetState extends State<FlightDetailWidget> {
               },
             ),
             FlatButton(
-              child: Text('Si'),
+              child: Text('Sí'),
               textColor: Colors.red,
               onPressed: () async => _cancelFlightAction(),
             ),
@@ -169,11 +169,12 @@ class _FlightDetailWidgetState extends State<FlightDetailWidget> {
   }
 
   void _cancelFlightAction() async {
-    Api.cancelProcessingFlights(this.flight);
+    await Api.cancelProcessingFlight(this.flight);
     Navigator.of(context).pop();
+    while (this.flight.state != FlightState.CANCELED) await _updateFlight();
   }
 
-  void _updateFlight() async {
+  Future<void> _updateFlight() async {
     var flights = await Api.fetchFlightDetails(this.flight);
     _flightStream.add(flights);
   }
