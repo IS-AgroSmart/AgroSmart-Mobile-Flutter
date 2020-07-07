@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/new_flight.dart';
@@ -119,13 +120,15 @@ abstract class AbstractFlightsState extends State<AbstractFlightsWidget> {
                                             style: TextStyle(color: Colors.red),
                                           ),
                                           onPressed: () {
-                                            Scaffold.of(_context).showSnackBar(
-                                                SnackBar(
-                                                    content: Text(
-                                                        'Eliminando vuelo. Espere...')));
                                             Navigator.of(context).pop();
-                                            Api.tryDeleteFlight(flight).then(
-                                                (_) async => _loadFlights());
+                                            Api.tryDeleteFlight(flight)
+                                                .then(
+                                                    (_) async => _loadFlights())
+                                                .catchError((error) => Scaffold
+                                                        .of(_context)
+                                                    .showSnackBar(SnackBar(
+                                                        content: Text(
+                                                            'Error al eliminar el vuelo'))));
                                           },
                                         ),
                                       ],
