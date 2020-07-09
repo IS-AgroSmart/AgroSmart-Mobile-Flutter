@@ -103,8 +103,8 @@ class Api {
   }
 
   static Future<int> cancelProcessingFlight(Flight flight) async {
-    var details =
-        await http.post(ENTRYPOINTNODE + "/task/cancel", body: {"uuid": flight.uuid});
+    var details = await http
+        .post(ENTRYPOINTNODE + "/task/cancel", body: {"uuid": flight.uuid});
     return details.statusCode;
   }
 
@@ -161,6 +161,13 @@ class Api {
     final response = await http.delete(ENTRYPOINT + '/flights/${f.uuid}/',
         headers: {"Authorization": "Token " + (await getToken())});
     return response.statusCode == 201;
+  }
+
+  static Future<bool> tryRestoreFlight(Flight f) async {
+    final response = await http.patch(ENTRYPOINT + '/flights/${f.uuid}/',
+        headers: {"Authorization": "Token " + (await getToken())},
+        body: {"deleted": false.toString()});
+    return response.statusCode == 200;
   }
 
   static Future<List<FlightResult>> getAvailableResults(Flight f) async {
