@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/new_flight.dart';
@@ -99,44 +98,53 @@ abstract class AbstractFlightsState extends State<AbstractFlightsWidget> {
                           subtitle: Text(
                               Flight.flightOutputFormatter.format(flight.date)),
                           leading: icon,
-                          trailing: deleteMessage.isNotEmpty
-                              ? IconButton(
-                                  icon: Icon(Icons.delete),
-                                  onPressed: () => showDialog(
-                                    context: context,
-                                    builder: (context) => AlertDialog(
-                                      title: Text("Confirmar eliminación"),
-                                      content: Text(deleteMessage),
-                                      actions: <Widget>[
-                                        new FlatButton(
-                                          child: new Text("Cancelar"),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                          },
+                          trailing: Wrap(spacing: 0, children: <Widget>[
+                            if (flight.deleted)
+                              IconButton(
+                                  icon: Icon(Icons.restore),
+                                  onPressed: () => Api.tryRestoreFlight(flight)
+                                      .then((_) async => _loadFlights())
+                                      .catchError((error) => Scaffold.of(
+                                      _context)
+                                      .showSnackBar(SnackBar(
+                                      content: Text(
+                                          'Error al restaurar el vuelo'))))),
+                            if (deleteMessage.isNotEmpty)
+                              IconButton(
+                                icon: Icon(Icons.delete),
+                                onPressed: () => showDialog(
+                                  context: context,
+                                  builder: (context) => AlertDialog(
+                                    title: Text("Confirmar eliminación"),
+                                    content: Text(deleteMessage),
+                                    actions: <Widget>[
+                                      new FlatButton(
+                                        child: new Text("Cancelar"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        },
+                                      ),
+                                      new FlatButton(
+                                        child: new Text(
+                                          "Eliminar",
+                                          style: TextStyle(color: Colors.red),
                                         ),
-                                        new FlatButton(
-                                          child: new Text(
-                                            "Eliminar",
-                                            style: TextStyle(color: Colors.red),
-                                          ),
-                                          onPressed: () {
-                                            Navigator.of(context).pop();
-                                            Api.tryDeleteFlight(flight)
-                                                .then(
-                                                    (_) async => _loadFlights())
-                                                .catchError((error) => Scaffold
-                                                        .of(_context)
-                                                    .showSnackBar(SnackBar(
-                                                        content: Text(
-                                                            'Error al eliminar el vuelo'))));
-                                          },
-                                        ),
-                                      ],
-                                    ),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                          Api.tryDeleteFlight(flight)
+                                              .then((_) async => _loadFlights())
+                                              .catchError((error) => Scaffold
+                                                      .of(_context)
+                                                  .showSnackBar(SnackBar(
+                                                      content: Text(
+                                                          'Error al eliminar el vuelo'))));
+                                        },
+                                      ),
+                                    ],
                                   ),
-                                )
-                              // HACK: Placeholder to NOT show Delete button
-                              : Container(width: 1, height: 1),
+                                ),
+                              ),
+                          ]),
                           onTap: () async {
                             if (detailOnClick) {
                               // await Navigator.push returns when FlightDetailWidget gets popped, time to reload flights

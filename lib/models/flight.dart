@@ -13,6 +13,7 @@ class Flight {
   final double progress;
   final FlightState state;
   final String camera;
+  final bool deleted;
 
   Flight(
       {this.uuid,
@@ -22,9 +23,11 @@ class Flight {
       this.processingTime,
       this.state,
       this.progress,
-      this.camera});
+      this.camera,
+      this.deleted});
 
   factory Flight.fromMap(Map<String, dynamic> json) {
+    print(json);
     return Flight(
       uuid: json["uuid"],
       name: json['name'],
@@ -38,6 +41,7 @@ class Flight {
           (json["nodeodm_info"]["progress"]?.toDouble() ?? 0.0)
               .toStringAsFixed(2)),
       camera : json['camera'],
+      deleted: json['deleted']
     );
   }
 
