@@ -52,16 +52,10 @@ class Api {
     return _parseErrorDict(utf8.decode(response.bodyBytes));
   }
 
-  static Future<bool> tryResetPassword(
-      String username, String pass, String email) async {
+  static Future<bool> tryResetPassword(String email) async {
     var response = await http.post(ENTRYPOINT + "/password_reset/",
         body: {"email": email});
-    if (response.statusCode == 200) {
-      return true;
-    else
-      return false;
-    }
-    return _parseErrorDict(utf8.decode(response.bodyBytes));
+    return response.statusCode == 200;
   }
 
   static List<String> _parseErrorDict(String errorJson) {

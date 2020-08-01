@@ -10,10 +10,10 @@ import 'package:flutter_app/processing_flights_widget.dart';
 import 'package:flutter_app/reports.dart';
 import 'package:flutter_app/results.dart';
 import 'package:flutter_app/waiting_flights_widget.dart';
+import 'package:flutter_app/request_password_reset_widget.dart';
+import 'package:flutter_app/password_reset_requested_widget.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:flutter_app/request_password_reset_wiget.dart';
-import 'package:flutter_app/password_reset_requested_wiget.dart';
 import 'api.dart';
 
 void main() async {
@@ -55,8 +55,8 @@ class _AppState extends State<MyNewApp> {
         WaitingFlightsWidget.routeName: (context) => WaitingFlightsWidget(),
         DeletedFlightsWidget.routeName: (context) => DeletedFlightsWidget(),
         NewFlightWidget.routeName: (context) => NewFlightWidget(),
-        RequestPasswordResetWidget.routeName: (context) => RequestPasswordResetWidget()
-        PasswordResetRequestedWidget.routeName: (context) => PasswordResetRequestedWidget()
+        RequestPasswordResetWidget.routeName: (context) => RequestPasswordResetWidget(),
+        PasswordResetRequestedWidget.routeName: (context) => PasswordResetRequestedWidget(),
       },
 //      theme: ThemeData(primarySwatch: Colors.green),
     );

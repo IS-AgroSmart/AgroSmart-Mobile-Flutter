@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_app/completed_flights_widget.dart';
 import 'package:flutter_app/create_account_widget.dart';
+import 'package:flutter_app/request_password_reset_widget.dart';
 import 'api.dart';
 
 class LoginWidget extends StatelessWidget {
@@ -79,7 +80,7 @@ class _LoginFormState extends State<LoginForm> {
                 child: Text('Crear cuenta'),
               ),
               InkWell(
-                onTap: () => Navigator.pushReplacementNamed(context, RequestPasswordResetWidget.routeName),
+                onTap: () => Navigator.pushNamed(context, RequestPasswordResetWidget.routeName),
                 child: Text('Olvidé mi contraseña'),
               ),
             ])));

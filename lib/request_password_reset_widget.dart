@@ -1,10 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_app/completed_flights_widget.dart';
 import 'package:flutter_app/create_account_widget.dart';
+import 'package:flutter_app/password_reset_requested_widget.dart';
 import 'api.dart';
 
 class RequestPasswordResetWidget extends StatelessWidget {
-  
+  static const routeName = "/reset_password";
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -24,13 +28,14 @@ class ResetPassForm extends StatefulWidget {
 class _ResetPassFormState extends State<ResetPassForm> {
   final _formKey = GlobalKey<FormState>();
   String _email;
-  String _errorMessage = "";
+  bool _errorMessage = false;
 
   String isNotEmptyValidator(message, String value) {
     return value.isEmpty ? message : null;
   }
 
-  String emailValidator(value) => isNotEmptyValidator("Escriba un email", value);
+  String emailValidator(value) =>
+      isNotEmptyValidator("Escriba un email", value);
 
   @override
   Widget build(BuildContext context) {
@@ -39,9 +44,9 @@ class _ResetPassFormState extends State<ResetPassForm> {
         child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(children: <Widget>[
-              if (_errorMessage.isNotEmpty)
+              if (_errorMessage)
                 Text(
-                  _errorMessage,
+                  "Error al solicitar reseteo de contraseña",
                   style: TextStyle(color: Colors.red),
                 ),
               TextFormField(
@@ -55,14 +60,15 @@ class _ResetPassFormState extends State<ResetPassForm> {
                     _formKey.currentState.save();
 
                     try {
-                      var errorMessages = await Api.tryResetPassword(_email);
-                      setState(() => _errorMessage = errorMessages.join("\n"));
-                      // If success == true, account creation was OK. Transition to Account Creation Successful screen
-                      if (errorMessages)
-                        Navigator.pushReplacementNamed(context, PasswordResetRequestedWidget.routeName);
+                      var success = await Api.tryResetPassword(_email);
+                      setState(() => _errorMessage = !success);
+                      // If success == true, password reset request was OK. Transition to Password Reset Requested screen
+                      if (success)
+                        Navigator.pushReplacementNamed(
+                            context, PasswordResetRequestedWidget.routeName);
                     } on SocketException catch (e) {
                       print(e);
-                      setState(() => _errorMessage = "Error de conexión");
+                      setState(() => _errorMessage = true);
                     }
                   }
                 },
