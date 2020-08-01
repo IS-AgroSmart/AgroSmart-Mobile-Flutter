@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'login_widget.dart';
 
 class PasswordResetRequestedWidget extends StatelessWidget {
   static const routeName = "/password_reset/requested";

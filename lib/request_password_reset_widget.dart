@@ -1,8 +1,6 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app/completed_flights_widget.dart';
-import 'package:flutter_app/create_account_widget.dart';
 import 'package:flutter_app/password_reset_requested_widget.dart';
 import 'api.dart';
 
