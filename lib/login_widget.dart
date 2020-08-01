@@ -78,6 +78,10 @@ class _LoginFormState extends State<LoginForm> {
                 onTap: () => Navigator.pushReplacementNamed(context, CreateAccountWidget.routeName),
                 child: Text('Crear cuenta'),
               ),
+              InkWell(
+                onTap: () => Navigator.pushReplacementNamed(context, RequestPasswordResetWidget.routeName),
+                child: Text('Olvidé mi contraseña'),
+              ),
             ])));
   }
 }
