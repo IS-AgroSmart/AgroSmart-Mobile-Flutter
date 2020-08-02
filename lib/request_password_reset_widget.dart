@@ -42,6 +42,9 @@ class _ResetPassFormState extends State<ResetPassForm> {
         child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Column(children: <Widget>[
+              Text(
+                "Ingrese el correo asociado a su cuenta",
+              ),
               if (_errorMessage)
                 Text(
                   "Error al solicitar reseteo de contraseña",
@@ -52,6 +55,9 @@ class _ResetPassFormState extends State<ResetPassForm> {
                   validator: emailValidator,
                   decoration: InputDecoration(hintText: "E-mail"),
                   onSaved: (val) => _email = val.trim()),
+              Text(
+                "Al dar a enviar se enviara un correo con los pasos a seguir",
+                ),
               RaisedButton(
                 onPressed: () async {
                   if (_formKey.currentState.validate()) {
