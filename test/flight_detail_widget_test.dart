@@ -37,13 +37,9 @@ void main() {
         MaterialApp(home: FlightDetailWidget(flight: Flight.fromMap(response)));
   });
 
-  testWidgets('FlightDetailWidget has a title', (WidgetTester tester) async {
-//    await tester.pumpWidget(widget);
-//    await tester.pump(Duration.zero);
-//    await tester.pumpWidget(widget);
-//    await tester.pump(Duration.zero);
-//    expect(find.byType(CircularProgressIndicator), findsNothing);
-//    expect(find.text("flightname"), findsOneWidget);
-//    expect(find.byType(RaisedButton), findsNWidgets(2));
+  testWidgets('FlightDetailWidget shows a loading indicator',
+      (WidgetTester tester) async {
+    await tester.pumpWidget(widget);
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
 }
