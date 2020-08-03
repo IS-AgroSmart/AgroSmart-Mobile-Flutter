@@ -1,6 +1,6 @@
 # flutter_app
 
-[![Coverage Status](https://coveralls.io/repos/github/IS-AgroSmart/AgroSmart-Mobile-Flutter/badge.svg?branch=test-widgets)](https://coveralls.io/github/IS-AgroSmart/AgroSmart-Mobile-Flutter?branch=test-widgets)
+[![Coverage Status](https://coveralls.io/repos/github/IS-AgroSmart/AgroSmart-Mobile-Flutter/badge.svg?branch=master)](https://coveralls.io/github/IS-AgroSmart/AgroSmart-Mobile-Flutter?branch=master)
 
 A new Flutter application.
 
