@@ -1,5 +1,7 @@
 # flutter_app
 
+[![Coverage Status](https://coveralls.io/repos/github/IS-AgroSmart/AgroSmart-Mobile-Flutter/badge.svg?branch=test-widgets)](https://coveralls.io/github/IS-AgroSmart/AgroSmart-Mobile-Flutter?branch=test-widgets)
+
 A new Flutter application.
 
 ## Getting Started
