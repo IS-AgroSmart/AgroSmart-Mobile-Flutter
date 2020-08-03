@@ -11,7 +11,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import 'mock_client.dart';
 
-
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   SharedPreferences.setMockInitialValues(
@@ -28,7 +27,10 @@ void main() {
         "id": 1,
         "email": "foo@example.com",
         "first_name": "Me",
-        "username": "foo"
+        "username": "foo",
+        "is_staff": false,
+        "pk": 1,
+        "type": "ADMIN"
       }
     ];
     when(client.get("http://droneapp.ngrok.io/api/users",
@@ -37,7 +39,13 @@ void main() {
   });
 
   test("User should be created from map", () {
-    User u = User.fromMap({"username": "foo", "email": "bar"});
+    User u = User.fromMap({
+      "username": "foo",
+      "email": "bar",
+      "is_staff": false,
+      "type": "ADMIN",
+      "pk": 1
+    });
     expect(u.username, "foo");
     expect(u.email, "bar");
   });
@@ -47,13 +55,17 @@ void main() {
   });
 
   test("Should parse single user", () {
-    expect(User.parse('[{"username": "foo", "email": "bar"}]').length, 1);
+    expect(
+        User.parse(
+                '[{"username": "foo", "email": "bar", "is_staff": false, "pk": 1, "type": "ADMIN"}]')
+            .length,
+        1);
   });
 
   test("Should parse multiple users", () {
     expect(
         User.parse(
-                '[{"username":"a","email":"a"}, {"username":"b","email":"b"}]')
+                '[{"username":"a","email":"a", "is_staff": false, "pk": 1, "type": "ADMIN"}, {"username":"b","email":"b", "is_staff": false, "pk": 2, "type": "ADMIN"}]')
             .length,
         2);
   });
