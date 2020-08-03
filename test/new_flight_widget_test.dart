@@ -1,15 +1,9 @@
-import 'dart:convert';
 
-import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_app/api.dart';
 import 'package:flutter_app/models/flight.dart';
 import 'package:flutter_app/new_flight.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
-import 'package:http/http.dart' as http;
 
-import 'mock_client.dart';
 
 void main() {
   var widget;
