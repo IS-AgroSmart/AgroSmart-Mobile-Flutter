@@ -9,6 +9,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_app/_abstract_users_widget.dart' as user_abs;
 
 import 'models/flight.dart';
 import 'models/user.dart';
@@ -35,7 +36,6 @@ class Api {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString("username", username);
     await prefs.setString("token", token);
-
     await fetchUserDetails();
 
     return true;
@@ -88,6 +88,35 @@ class Api {
     } else {
       throw Exception(response.body);
     }
+  }
+
+  static Future<List<User>> fetchUsersRequest() async {
+    final response = await http.get(ENTRYPOINT + '/users',
+        headers: {"Authorization": "Token " + (await getToken())});
+    var users;
+    if (response.statusCode == 200) {
+      users = User.parse(response.body)
+          .where((u) => u.type == "DEMO_USER")
+          .toList();
+      return users;
+    } else {
+      throw Exception(response.body);
+    }
+  }
+
+  static Future<String> updateTypeUser(id, newType) async {
+    var response = await http.patch(ENTRYPOINT + '/users/' + id + '/',
+        headers: {
+          "Authorization": "Token " + (await getToken()),
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(<String, String>{
+          'type': newType,
+        }));
+    if (response.statusCode != 200) {
+      return "La solicitud ha fallado, por favor intente mas tarde";
+    }
+    return "La solicitud se ha completado con exito";
   }
 
   static Future<List<Flight>> fetchCompleteOrErroredFlights() async {
