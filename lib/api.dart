@@ -22,9 +22,10 @@ class Api {
 
   // ignore: cancel_subscriptions
   static StreamSubscription connectivitySubscription;
+  static var client = http.Client();
 
   static Future<bool> tryLogin(String username, String pass) async {
-    var response = await http.post(ENTRYPOINT + "/api-auth",
+    var response = await client.post(ENTRYPOINT + "/api-auth",
         body: {"username": username, "password": pass});
 
     if (response.statusCode != 200) {
@@ -43,13 +44,19 @@ class Api {
 
   static Future<List<String>> tryCreateAccount(
       String username, String pass, String email) async {
-    var response = await http.post(ENTRYPOINT + "/users/",
+    var response = await client.post(ENTRYPOINT + "/users/",
         body: {"username": username, "password": pass, "email": email});
     if (response.statusCode == 201) {
       tryLogin(username, pass);
       return [];
     }
     return _parseErrorDict(utf8.decode(response.bodyBytes));
+  }
+
+  static Future<bool> tryResetPassword(String email) async {
+    var response = await client
+        .post(ENTRYPOINT + "/password_reset/", body: {"email": email});
+    return response.statusCode == 200;
   }
 
   static List<String> _parseErrorDict(String errorJson) {
@@ -76,7 +83,7 @@ class Api {
     final prefs = await SharedPreferences.getInstance();
     var username = prefs.getString("username");
 
-    final response = await http.get(ENTRYPOINT + '/users',
+    final response = await client.get(ENTRYPOINT + '/users',
         headers: {"Authorization": "Token " + (await getToken())});
     if (response.statusCode == 200) {
       var users = User.parse(response.body)
@@ -143,7 +150,7 @@ class Api {
   }
 
   static Future<List<Flight>> fetchDeletedFlights() async {
-    final response = await http.get(ENTRYPOINT + '/flights/deleted',
+    final response = await client.get(ENTRYPOINT + '/flights/deleted',
         headers: {"Authorization": "Token " + (await getToken())});
     if (response.statusCode == 200) {
       return Flight.parseList(response.body).toList();
@@ -154,7 +161,7 @@ class Api {
 
   static Future<List<Flight>> _fetchConditionFlights(
       bool Function(Flight) predicate) async {
-    final response = await http.get(ENTRYPOINT + '/flights',
+    final response = await client.get(ENTRYPOINT + '/flights',
         headers: {"Authorization": "Token " + (await getToken())});
     if (response.statusCode == 200) {
       return Flight.parseList(response.body).where(predicate).toList();
@@ -164,7 +171,7 @@ class Api {
   }
 
   static Future<Flight> fetchFlightDetails(Flight f) async {
-    final response = await http.get(ENTRYPOINT + '/flights/${f.uuid}',
+    final response = await client.get(ENTRYPOINT + '/flights/${f.uuid}',
         headers: {"Authorization": "Token " + (await getToken())});
     if (response.statusCode == 200) {
       print("Updating");
@@ -174,7 +181,7 @@ class Api {
   }
 
   static Future<bool> tryCreateFlight(Flight f) async {
-    final response = await http.post(ENTRYPOINT + '/flights/', headers: {
+    final response = await client.post(ENTRYPOINT + '/flights/', headers: {
       "Authorization": "Token " + (await getToken())
     }, body: {
       "name": f.name,
@@ -187,13 +194,13 @@ class Api {
   }
 
   static Future<bool> tryDeleteFlight(Flight f) async {
-    final response = await http.delete(ENTRYPOINT + '/flights/${f.uuid}/',
+    final response = await client.delete(ENTRYPOINT + '/flights/${f.uuid}/',
         headers: {"Authorization": "Token " + (await getToken())});
     return response.statusCode == 201;
   }
 
   static Future<bool> tryRestoreFlight(Flight f) async {
-    final response = await http.patch(ENTRYPOINT + '/flights/${f.uuid}/',
+    final response = await client.patch(ENTRYPOINT + '/flights/${f.uuid}/',
         headers: {"Authorization": "Token " + (await getToken())},
         body: {"deleted": false.toString()});
     return response.statusCode == 200;
