@@ -7,7 +7,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:http/http.dart' as http;
 
-import 'mock_client.dart';
+import 'mocks.dart';
 
 void main() {
   var widget;
@@ -66,7 +66,7 @@ void main() {
     var client = MockClient();
     Api.client = client;
     when(client.post(any, body: anyNamed("body")))
-        .thenAnswer((_) async => http.Response(jsonEncode({}), 200));
+        .thenAnswer((_) async => http.Response(jsonEncode({"token": "mynewtoken"}), 200));
 
     await tester.enterText(find.byType(TextFormField).first, "myusername");
     await tester.enterText(find.byType(TextFormField).last, "mypassword");

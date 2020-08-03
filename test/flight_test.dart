@@ -9,7 +9,7 @@ import 'package:http/http.dart' as http;
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'mock_client.dart';
+import 'mocks.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

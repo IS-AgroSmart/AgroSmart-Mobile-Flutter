@@ -8,7 +8,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:http/http.dart' as http;
 
-import 'mock_client.dart';
+import 'mocks.dart';
 
 void main() {
   var widget, client;
