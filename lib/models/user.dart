@@ -3,14 +3,14 @@ import 'dart:convert';
 class User {
   final int pk;
   final String username, name, email, type;
-  final bool is_staff;
+  final bool isStaff;
 
   User(
       {this.pk,
       this.username,
       this.name,
       this.email,
-      this.is_staff,
+      this.isStaff,
       this.type});
 
   factory User.fromMap(Map<String, dynamic> json) {
@@ -23,7 +23,7 @@ class User {
     return User(
       username: json["username"],
       email: json["email"],
-      is_staff: json['is_staff'],
+      isStaff: json['is_staff'],
       type: json['type'],
       pk: json['pk'],
     );

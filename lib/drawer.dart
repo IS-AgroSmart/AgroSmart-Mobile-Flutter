@@ -66,11 +66,11 @@ class AppDrawer extends Drawer {
                         title: "Configuración"))),
           ),
           Visibility(
-            visible: Helpers.loggedInUser.is_staff ||
+            visible: Helpers.loggedInUser.isStaff ||
                 Helpers.loggedInUser.type == 'ADMIN',
             child: ListTile(
               title: Text("Opciones Admin"),
-              enabled: Helpers.loggedInUser.is_staff ||
+              enabled: Helpers.loggedInUser.isStaff ||
                   Helpers.loggedInUser.type == 'ADMIN',
               leading: Icon(Icons.build),
               onTap: () => Navigator.pushNamedAndRemoveUntil(
