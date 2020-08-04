@@ -10,7 +10,6 @@ import 'models/user.dart';
 
 abstract class AbstractUersWidget extends StatefulWidget {
   static const routeName = "declare on child classes";
-  static String textFilter = '';
 
   String routeNameFunc();
 }
@@ -22,6 +21,7 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
   List<User> users;
   String appTitle;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
+  String textFilter = '';
 
   @override
   void initState() {
@@ -33,12 +33,11 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
 
   void _loadUsers() async {
     users = await usersFutureCallable();
-    if (AbstractUersWidget.textFilter != '') {
+    if (textFilter.isNotEmpty) {
       _usersStream.add(users
           .where((u) =>
-              u.username.toLowerCase().indexOf(AbstractUersWidget.textFilter) >
-                  -1 ||
-              u.email.toLowerCase().indexOf(AbstractUersWidget.textFilter) > -1)
+              u.username.toLowerCase().indexOf(textFilter) > -1 ||
+              u.email.toLowerCase().indexOf(textFilter) > -1)
           .toList());
     } else {
       _usersStream.add(users);
@@ -51,7 +50,7 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
         timeInSecForIos: 1,
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.blueGrey[200],
         textColor: Colors.white);
   }
 
@@ -114,7 +113,7 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
                             IconButton(
                               icon: Icon(Icons.block,
                                   color: Colors.red, semanticLabel: "Bloquear"),
-                              tooltip: "bloquear",
+                              tooltip: "Bloquear",
                               onPressed: () async => {
                                 _action(user, 'Bloquear'),
                               },
@@ -126,7 +125,7 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
                   ));
             } else if (snapshot.hasData && snapshot.data.isEmpty)
               return RefreshIndicator(
-                  onRefresh: () async => _loadUsers(),
+                  onRefresh: () async => {_loadUsers()},
                   child:
                       Center(child: Text("No hay ${appTitle.toLowerCase()}")));
             else
@@ -135,12 +134,14 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
         ),
         bottomSheet: TextFormField(
           decoration: InputDecoration(
-              hintText: "Ingrese la busqueda..",
-              icon: IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () async => _loadUsers(),
-              )),
-          onSaved: (val) => AbstractUersWidget.textFilter = val.trim(),
+            hintText: "Ingrese la busqueda..",
+            icon: IconButton(
+              icon: Icon(Icons.search),
+              onPressed: () async => {_loadUsers()},
+            ),
+            helperText: "Puede buscar por nombre de usuario o por correo",
+          ),
+          onChanged: (val) => textFilter = val.trim(),
         ));
   }
 
@@ -169,10 +170,11 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
       type = "ACTIVE";
       helper(user, type);
     }
-    _loadUsers();
   }
 
-  helper(User user, type) {
-    showToast(Api.updateTypeUser(user.pk.toString(), type).toString());
+  helper(User user, type) async {
+    Api.updateTypeUser(user.pk.toString(), type)
+        .then((value) => this.showToast(value));
+    _loadUsers();
   }
 }

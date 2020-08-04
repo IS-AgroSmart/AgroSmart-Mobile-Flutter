@@ -116,7 +116,7 @@ class Api {
     if (response.statusCode != 200) {
       return "La solicitud ha fallado, por favor intente mas tarde";
     }
-    return "La solicitud se ha completado con exito";
+    return "La solicitud se ha completado con exito\n si los cambios no se muestran por favor recarge la pagina..";
   }
 
   static Future<List<Flight>> fetchCompleteOrErroredFlights() async {
