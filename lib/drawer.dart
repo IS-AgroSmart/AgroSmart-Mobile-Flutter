@@ -9,6 +9,8 @@ import 'package:prefs_config/prefs_config.dart';
 
 import 'api.dart';
 import 'deleted_flights_widget.dart';
+import 'helpers.dart';
+import 'package:flutter_app/UserRequests.dart';
 
 class AppDrawer extends Drawer {
   @override
@@ -62,6 +64,18 @@ class AppDrawer extends Drawer {
                     builder: (context) => PreferenceContainer(
                         preferences: _generatePrefs(),
                         title: "Configuración"))),
+          ),
+          Visibility(
+            visible: Helpers.loggedInUser.isStaff ||
+                Helpers.loggedInUser.type == 'ADMIN',
+            child: ListTile(
+              title: Text("Opciones Admin"),
+              enabled: Helpers.loggedInUser.isStaff ||
+                  Helpers.loggedInUser.type == 'ADMIN',
+              leading: Icon(Icons.build),
+              onTap: () => Navigator.pushNamedAndRemoveUntil(
+                  context, UserRequestsWidget.routeName, (route) => false),
+            ),
           ),
           ListTile(
             title: Text("Cerrar sesión"),

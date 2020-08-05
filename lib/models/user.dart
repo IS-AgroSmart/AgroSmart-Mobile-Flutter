@@ -1,16 +1,31 @@
 import 'dart:convert';
 
 class User {
-  final String username, name, email;
+  final int pk;
+  final String username, name, email, type;
+  final bool isStaff;
 
-  User({this.username, this.name, this.email});
+  User(
+      {this.pk,
+      this.username,
+      this.name,
+      this.email,
+      this.isStaff,
+      this.type});
 
   factory User.fromMap(Map<String, dynamic> json) {
     if (!json.containsKey("username")) throw ArgumentError("username");
     if (!json.containsKey("email")) throw ArgumentError("email");
+    if (!json.containsKey("is_staff")) throw ArgumentError("is_staff");
+    if (!json.containsKey("type")) throw ArgumentError("type");
+    if (!json.containsKey("pk")) throw ArgumentError("pk");
+
     return User(
       username: json["username"],
       email: json["email"],
+      isStaff: json['is_staff'],
+      type: json['type'],
+      pk: json['pk'],
     );
   }
 
