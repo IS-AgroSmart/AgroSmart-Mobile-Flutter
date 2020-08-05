@@ -13,6 +13,7 @@ import 'package:flutter_app/waiting_flights_widget.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'api.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -35,6 +36,7 @@ class MyNewApp extends StatefulWidget {
 
 class _AppState extends State<MyNewApp> {
   bool _loggedIn = false;
+  FirebaseMessaging firebaseMessaging = new FirebaseMessaging();
 
   @override
   Widget build(BuildContext context) {
@@ -62,5 +64,16 @@ class _AppState extends State<MyNewApp> {
   void initState() {
     super.initState();
     Api.getToken().then((result) => setState(() => _loggedIn = (result != null)));
+    firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) {
+        print('onMessage called: $message');
+      },
+      onResume: (Map<String, dynamic> message) {
+        print('onResume called: $message');
+      },
+      onLaunch: (Map<String, dynamic> message) {
+        print('onLaunch called: $message');
+      },
+    );
   }
 }

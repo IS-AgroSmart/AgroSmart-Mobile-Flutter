@@ -18,6 +18,7 @@ class _CompletedFlightsState extends AbstractFlightsState {
   @override
   void initState() {
     flightsFutureCallable = Api.fetchCompleteOrErroredFlights;
+    Api.saveUIDevice();
     super.initState();
   }
 }

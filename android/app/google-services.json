@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "896182655402",
+    "firebase_url": "https://droneapp-movil.firebaseio.com",
+    "project_id": "droneapp-movil",
+    "storage_bucket": "droneapp-movil.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:896182655402:android:ca922d9f6e2621ea7df3d3",
+        "android_client_info": {
+          "package_name": "com.droneapp.flutter_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "896182655402-ai6e1qa7qvoa57ecjn7lekue8v0l075d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBoL1DaQ5H_QSHEzANWgM6b60dfCijOVVY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "896182655402-ai6e1qa7qvoa57ecjn7lekue8v0l075d.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

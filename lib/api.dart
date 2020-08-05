@@ -9,6 +9,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'models/flight.dart';
 import 'models/user.dart';
@@ -40,6 +41,40 @@ class Api {
 
     return true;
   }
+
+  static void iOSPermission(FirebaseMessaging _firebaseMessaging) {
+    _firebaseMessaging.requestNotificationPermissions(
+        IosNotificationSettings(sound: true, badge: true, alert: true)
+    );
+    _firebaseMessaging.onIosSettingsRegistered
+        .listen((IosNotificationSettings settings)
+    {
+      print("Settings registered: $settings");
+    });
+  }
+
+  static Future<bool> saveUIDevice() async {
+
+    final prefs = await SharedPreferences.getInstance();
+    String username = prefs.getString("username");
+    String os = Platform.isIOS ? "ios" : "android";
+
+    FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
+    if (Platform.isIOS) iOSPermission(_firebaseMessaging);
+
+    String tokenDevice = await _firebaseMessaging.getToken();
+    print(tokenDevice);
+
+    var response = await http.post(ENTRYPOINT + "/register-push/" + os,
+        body: {"username": username, "token": tokenDevice});
+
+    if (response.statusCode != 200) {
+      return false;
+    }
+
+    return true;
+  }
+
 
   static Future<List<String>> tryCreateAccount(
       String username, String pass, String email) async {
