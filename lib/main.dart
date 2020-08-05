@@ -9,6 +9,8 @@ import 'package:flutter_app/orthomosaic_preview.dart';
 import 'package:flutter_app/processing_flights_widget.dart';
 import 'package:flutter_app/reports.dart';
 import 'package:flutter_app/results.dart';
+import 'package:flutter_app/profile.dart';
+import 'package:flutter_app/change_password.dart';
 import 'package:flutter_app/waiting_flights_widget.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:intl/date_symbol_data_local.dart';
@@ -53,6 +55,9 @@ class _AppState extends State<MyNewApp> {
         WaitingFlightsWidget.routeName: (context) => WaitingFlightsWidget(),
         DeletedFlightsWidget.routeName: (context) => DeletedFlightsWidget(),
         NewFlightWidget.routeName: (context) => NewFlightWidget(),
+        Profile.routeName: (context) => Profile(),
+        ChangePassword.routeName: (context) => ChangePassword(),
+
       },
 //      theme: ThemeData(primarySwatch: Colors.green),
     );

@@ -15,7 +15,8 @@ import 'models/user.dart';
 import 'orthomosaic_preview.dart';
 
 class Api {
-  static const ENTRYPOINTG = 'http://droneapp.ngrok.io/';
+  //static const ENTRYPOINTG = 'http://droneapp.ngrok.io/';
+  static const ENTRYPOINTG='http://9da09c818c16.ngrok.io/';
   static const ENTRYPOINT = ENTRYPOINTG + "api";
   static const ENTRYPOINTNODE = ENTRYPOINTG + "nodeodm/";
 
@@ -42,9 +43,9 @@ class Api {
   }
 
   static Future<List<String>> tryCreateAccount(
-      String username, String pass, String email) async {
+      String username, String pass, String email,String name,String organization) async {
     var response = await http.post(ENTRYPOINT + "/users/",
-        body: {"username": username, "password": pass, "email": email});
+        body: {"username": username, "password": pass, "email": email,"organization": organization,"first_name": name});
     if (response.statusCode == 201) {
       tryLogin(username, pass);
       return [];

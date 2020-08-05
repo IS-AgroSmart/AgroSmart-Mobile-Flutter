@@ -25,7 +25,7 @@ class CreateAccountForm extends StatefulWidget {
 
 class _CreateAccountFormState extends State<CreateAccountForm> {
   final _formKey = GlobalKey<FormState>();
-  String _username, _pass, _email;
+  String _username, _pass, _email,_organization,_name;
   String _errorMessage = "";
 
   String isNotEmptyValidator(message, String value) {
@@ -37,6 +37,10 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
   String emailValidator(value) => isNotEmptyValidator("Escriba un email", value);
 
   String passwordValidator(value) => isNotEmptyValidator("Escriba una contraseña", value);
+
+  String nameValidator(value) => isNotEmptyValidator("Escriba un nombre correcto", value);
+
+  String organizationValidator(value) => isNotEmptyValidator("Escriba el nombre de su organización", value);
 
   @override
   Widget build(BuildContext context) {
@@ -55,6 +59,10 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
                   decoration: InputDecoration(hintText: "Username"),
                   onSaved: (val) => _username = val.trim()),
               TextFormField(
+                  validator: nameValidator,
+                  decoration: InputDecoration(hintText: "Nombres"),
+                  onSaved: (val) => _name = val.trim()),
+              TextFormField(
                   keyboardType: TextInputType.emailAddress,
                   validator: emailValidator,
                   decoration: InputDecoration(hintText: "E-mail"),
@@ -64,13 +72,18 @@ class _CreateAccountFormState extends State<CreateAccountForm> {
                   validator: passwordValidator,
                   decoration: InputDecoration(hintText: "Contraseña"),
                   onSaved: (val) => _pass = val.trim()),
+              TextFormField(
+                  validator: organizationValidator,
+                  decoration: InputDecoration(hintText: "Organizacion"),
+                  onSaved: (val) => _organization = val.trim()),
+
               RaisedButton(
                 onPressed: () async {
                   if (_formKey.currentState.validate()) {
                     _formKey.currentState.save();
 
                     try {
-                      var errorMessages = await Api.tryCreateAccount(_username, _pass, _email);
+                      var errorMessages = await Api.tryCreateAccount(_username, _pass, _email,_name,_organization);
                       setState(() => _errorMessage = errorMessages.join("\n"));
                       // If success == true, account creation was OK. Transition to Account Creation Successful screen
                       if (errorMessages.isEmpty)
