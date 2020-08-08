@@ -1,7 +1,9 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/profile.dart';
 import 'api.dart';
+import 'drawer.dart';
 import 'create_account_successful_widget.dart';
 
 class ChangePassword extends StatelessWidget {
@@ -11,9 +13,10 @@ class ChangePassword extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("ChangePassword"),
+        title: Text("Cambiar contraseña"),
       ),
       body: ChangePasswordForm(),
+      drawer: AppDrawer(),
     );
   }
 }
@@ -32,7 +35,16 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
     return value.isEmpty ? message : null;
   }
 
+  String isDifferentPassword(message,String value){
+    if( _pass == value){
+      return null;
+    }
+    return message;
+  }
+
   String passwordValidator(value) => isNotEmptyValidator("Escriba una contraseña válida", value);
+
+  String repeatedPasswordValidator(value) => isDifferentPassword("Contraseñas no coinciden", value);
 
   @override
   Widget build(BuildContext context) {
@@ -50,12 +62,41 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
                   obscureText: true,
                   validator: passwordValidator,
                   decoration: InputDecoration(hintText: "Nueva Contraseña"),
-                  onSaved: (val) => _pass = val.trim()),
+                  onChanged: (val) => _pass = val.trim()),
               TextFormField(
                   obscureText: true,
-                  validator: passwordValidator,
+                  validator:  repeatedPasswordValidator,
                   decoration: InputDecoration(hintText: "Repetir Contraseña Nueva"),
-                  onSaved: (val) => _repeatedPass = val.trim()),
+                  onChanged: (val) => _repeatedPass = val.trim()),
+              Row(
+                  mainAxisAlignment:
+                  MainAxisAlignment.spaceBetween,
+                  children: <Widget>[
+                    RaisedButton(
+                        child: Text("Aceptar"),
+                      onPressed: () async {
+                        if (_formKey.currentState.validate()) {
+                          _formKey.currentState.save();
+                          try {
+                              var errorMessages = await Api.tryChangePassword(_repeatedPass);
+                              setState(() => _errorMessage = errorMessages.join("\n"));
+                              //If success == true, account creation was OK. Transition to Account Creation Successful screen
+                              if (errorMessages.isEmpty)
+                                Navigator.pushReplacementNamed(context, Profile.routeName);
+                          } on SocketException catch (e) {
+                            print(e);
+                            setState(() => _errorMessage = "Error de conexión");
+                          }
+                        }
+                      },
+                    ),
+                    RaisedButton(
+                        child: Text("Cancelar"),
+                      onPressed: () async =>
+                          Navigator.pushReplacementNamed(context, Profile.routeName),
+                    ),
+                  ]
+              )
             ])));
   }
 }

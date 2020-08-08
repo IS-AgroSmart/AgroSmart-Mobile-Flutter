@@ -15,8 +15,7 @@ import 'models/user.dart';
 import 'orthomosaic_preview.dart';
 
 class Api {
-  //static const ENTRYPOINTG = 'http://droneapp.ngrok.io/';
-  static const ENTRYPOINTG='http://9da09c818c16.ngrok.io/';
+  static const ENTRYPOINTG = 'http://droneapp.ngrok.io/';
   static const ENTRYPOINT = ENTRYPOINTG + "api";
   static const ENTRYPOINTNODE = ENTRYPOINTG + "nodeodm/";
 
@@ -261,4 +260,16 @@ class Api {
       return connectivityResult == ConnectivityResult.none;
     });
   }
+
+  static Future<List<String>> tryChangePassword(
+      String newPassword) async {
+    var response = await http.post(ENTRYPOINT + "/users/"+Helpers.loggedInUser.pk+"/set_password/",headers: {"Authorization": "Token " + (await getToken())},
+        body: {"password": newPassword});
+    if (response.statusCode == 200) {
+      return [];
+    }
+    return _parseErrorDict(utf8.decode(response.bodyBytes));
+  }
+  
 }
+
