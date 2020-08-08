@@ -10,6 +10,8 @@ import 'package:flutter_app/processing_flights_widget.dart';
 import 'package:flutter_app/reports.dart';
 import 'package:flutter_app/results.dart';
 import 'package:flutter_app/waiting_flights_widget.dart';
+import 'package:flutter_app/request_password_reset_widget.dart';
+import 'package:flutter_app/password_reset_requested_widget.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_app/UserRequests.dart';
@@ -58,6 +60,8 @@ class _AppState extends State<MyNewApp> {
         DeletedFlightsWidget.routeName: (context) => DeletedFlightsWidget(),
         NewFlightWidget.routeName: (context) => NewFlightWidget(),
         UserRequestsWidget.routeName: (context) => UserRequestsWidget(),
+        RequestPasswordResetWidget.routeName: (context) => RequestPasswordResetWidget(),
+        PasswordResetRequestedWidget.routeName: (context) => PasswordResetRequestedWidget(),
       },
 //      theme: ThemeData(primarySwatch: Colors.green),
     );
