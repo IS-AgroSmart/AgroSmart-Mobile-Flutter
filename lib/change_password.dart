@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/profile.dart';
 import 'api.dart';
 import 'drawer.dart';
-import 'create_account_successful_widget.dart';
 
 class ChangePassword extends StatelessWidget {
   static const routeName = "/changePassword";

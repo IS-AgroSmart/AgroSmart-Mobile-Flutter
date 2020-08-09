@@ -4,9 +4,6 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter_app/change_password.dart';
 import 'drawer.dart';
 import 'package:flutter_app/helpers.dart';
-import 'package:flutter_app/models/user.dart';
-
-import 'api.dart';
 
 class Profile extends StatelessWidget {
   static const routeName = "/profile";
