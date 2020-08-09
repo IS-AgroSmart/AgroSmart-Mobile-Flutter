@@ -42,9 +42,9 @@ class Api {
   }
 
   static Future<List<String>> tryCreateAccount(
-      String username, String pass, String email) async {
-    var response = await client.post(ENTRYPOINT + "/users/",
-        body: {"username": username, "password": pass, "email": email});
+      String username, String pass, String email,String name,String organization) async {
+    var response = await http.post(ENTRYPOINT + "/users/",
+        body: {"username": username, "password": pass, "email": email,"organization": organization,"first_name": name});
     if (response.statusCode == 201) {
       tryLogin(username, pass);
       return [];
@@ -295,4 +295,16 @@ class Api {
       return connectivityResult == ConnectivityResult.none;
     });
   }
+
+  static Future<List<String>> tryChangePassword(
+      String newPassword) async {
+    var response = await http.post(ENTRYPOINT + "/users/"+Helpers.loggedInUser.pk.toString()+"/set_password/",headers: {"Authorization": "Token " + (await getToken())},
+        body: {"password": newPassword});
+    if (response.statusCode == 200) {
+      return [];
+    }
+    return _parseErrorDict(utf8.decode(response.bodyBytes));
+  }
+  
 }
+
