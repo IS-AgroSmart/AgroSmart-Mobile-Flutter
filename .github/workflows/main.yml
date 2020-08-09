@@ -1,6 +1,6 @@
 name: CI
 
-on: push
+on: ["push", "pull_request"]
 
 jobs: 
   build-and-test: 
@@ -18,4 +18,8 @@ jobs:
     # Analyze our Dart code
     - run: flutter analyze
     # Run our tests
-    - run: flutter test
+    - run: flutter test --coverage
+    - name: Publish coverage to Coveralls
+      uses: coverallsapp/github-action@master
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}

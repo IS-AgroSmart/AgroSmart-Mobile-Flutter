@@ -12,8 +12,11 @@ import 'package:flutter_app/results.dart';
 import 'package:flutter_app/profile.dart';
 import 'package:flutter_app/change_password.dart';
 import 'package:flutter_app/waiting_flights_widget.dart';
+import 'package:flutter_app/request_password_reset_widget.dart';
+import 'package:flutter_app/password_reset_requested_widget.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:flutter_app/UserRequests.dart';
 import 'api.dart';
 
 void main() async {
@@ -46,18 +49,23 @@ class _AppState extends State<MyNewApp> {
       routes: {
         LoginWidget.routeName: (context) => LoginWidget(),
         CreateAccountWidget.routeName: (context) => CreateAccountWidget(),
-        CreateAccountSuccessfulWidget.routeName: (context) => CreateAccountSuccessfulWidget(),
+        CreateAccountSuccessfulWidget.routeName: (context) =>
+            CreateAccountSuccessfulWidget(),
         CompletedFlightsWidget.routeName: (context) => CompletedFlightsWidget(),
         ResultsWidget.routeName: (context) => ResultsWidget(),
         ReportsWidget.routeName: (context) => ReportsWidget(),
-        OrthomosaicPreviewWidget.routeName: (context) => OrthomosaicPreviewWidget(),
-        ProcessingFlightsWidget.routeName: (context) => ProcessingFlightsWidget(),
+        OrthomosaicPreviewWidget.routeName: (context) =>
+            OrthomosaicPreviewWidget(),
+        ProcessingFlightsWidget.routeName: (context) =>
+            ProcessingFlightsWidget(),
         WaitingFlightsWidget.routeName: (context) => WaitingFlightsWidget(),
         DeletedFlightsWidget.routeName: (context) => DeletedFlightsWidget(),
         NewFlightWidget.routeName: (context) => NewFlightWidget(),
         Profile.routeName: (context) => Profile(),
         ChangePassword.routeName: (context) => ChangePassword(),
-
+        UserRequestsWidget.routeName: (context) => UserRequestsWidget(),
+        RequestPasswordResetWidget.routeName: (context) => RequestPasswordResetWidget(),
+        PasswordResetRequestedWidget.routeName: (context) => PasswordResetRequestedWidget(),
       },
 //      theme: ThemeData(primarySwatch: Colors.green),
     );
@@ -66,6 +74,7 @@ class _AppState extends State<MyNewApp> {
   @override
   void initState() {
     super.initState();
-    Api.getToken().then((result) => setState(() => _loggedIn = (result != null)));
+    Api.getToken()
+        .then((result) => setState(() => _loggedIn = (result != null)));
   }
 }
