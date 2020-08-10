@@ -4,6 +4,7 @@ import 'package:flutter_app/helpers.dart';
 import 'package:flutter_app/login_widget.dart';
 import 'package:flutter_app/new_flight.dart';
 import 'package:flutter_app/processing_flights_widget.dart';
+import 'package:flutter_app/profile.dart';
 import 'package:flutter_app/waiting_flights_widget.dart';
 import 'package:prefs_config/prefs_config.dart';
 
@@ -76,6 +77,12 @@ class AppDrawer extends Drawer {
               onTap: () => Navigator.pushNamedAndRemoveUntil(
                   context, UserRequestsWidget.routeName, (route) => false),
             ),
+          ),
+          ListTile(
+            title: Text("Perfil"),
+            leading: Icon(Icons.person),
+            onTap: () => Navigator.pushReplacementNamed(
+                context, Profile.routeName),
           ),
           ListTile(
             title: Text("Cerrar sesión"),

@@ -1,8 +1,9 @@
 import 'dart:convert';
 
 class User {
+
   final int pk;
-  final String username, name, email, type;
+  final String username, name, email, type,organization;
   final bool isStaff;
 
   User(
@@ -11,11 +12,15 @@ class User {
       this.name,
       this.email,
       this.isStaff,
-      this.type});
+      this.type,
+      this.organization
+      });
 
   factory User.fromMap(Map<String, dynamic> json) {
     if (!json.containsKey("username")) throw ArgumentError("username");
     if (!json.containsKey("email")) throw ArgumentError("email");
+    if (!json.containsKey("first_name")) throw ArgumentError("first_name");
+    if (!json.containsKey("organization")) throw ArgumentError("organization");
     if (!json.containsKey("is_staff")) throw ArgumentError("is_staff");
     if (!json.containsKey("type")) throw ArgumentError("type");
     if (!json.containsKey("pk")) throw ArgumentError("pk");
@@ -26,6 +31,8 @@ class User {
       isStaff: json['is_staff'],
       type: json['type'],
       pk: json['pk'],
+      name: json["first_name"],
+      organization: json['organization'],
     );
   }
 
