@@ -18,6 +18,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_app/UserRequests.dart';
 import 'api.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -40,6 +41,7 @@ class MyNewApp extends StatefulWidget {
 
 class _AppState extends State<MyNewApp> {
   bool _loggedIn = false;
+  FirebaseMessaging firebaseMessaging = new FirebaseMessaging();
 
   @override
   Widget build(BuildContext context) {
@@ -76,5 +78,30 @@ class _AppState extends State<MyNewApp> {
     super.initState();
     Api.getToken()
         .then((result) => setState(() => _loggedIn = (result != null)));
+    firebaseMessaging.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            content: ListTile(
+              title: Text(message['notification']['title']),
+              subtitle: Text(message['notification']['body']),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Ok'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+        );
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print('onResume called: $message');
+      },
+      onLaunch: (Map<String, dynamic> message) async {
+        print('onLaunch called: $message');
+      },
+    );
   }
 }
