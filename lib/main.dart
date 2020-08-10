@@ -79,13 +79,27 @@ class _AppState extends State<MyNewApp> {
     Api.getToken()
         .then((result) => setState(() => _loggedIn = (result != null)));
     firebaseMessaging.configure(
-      onMessage: (Map<String, dynamic> message) {
-        print('onMessage called: $message');
+      onMessage: (Map<String, dynamic> message) async {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            content: ListTile(
+              title: Text(message['notification']['title']),
+              subtitle: Text(message['notification']['body']),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Ok'),
+                onPressed: () => Navigator.of(context).pop(),
+              ),
+            ],
+          ),
+        );
       },
-      onResume: (Map<String, dynamic> message) {
+      onResume: (Map<String, dynamic> message) async {
         print('onResume called: $message');
       },
-      onLaunch: (Map<String, dynamic> message) {
+      onLaunch: (Map<String, dynamic> message) async {
         print('onLaunch called: $message');
       },
     );
