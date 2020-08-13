@@ -44,17 +44,14 @@ class Api {
 
   static void iOSPermission(FirebaseMessaging _firebaseMessaging) {
     _firebaseMessaging.requestNotificationPermissions(
-        IosNotificationSettings(sound: true, badge: true, alert: true)
-    );
+        IosNotificationSettings(sound: true, badge: true, alert: true));
     _firebaseMessaging.onIosSettingsRegistered
-        .listen((IosNotificationSettings settings)
-    {
+        .listen((IosNotificationSettings settings) {
       print("Settings registered: $settings");
     });
   }
 
   static Future<bool> saveUIDevice() async {
-
     final prefs = await SharedPreferences.getInstance();
     String username = prefs.getString("username");
     String os = Platform.isIOS ? "ios" : "android";
@@ -65,7 +62,7 @@ class Api {
     String tokenDevice = await _firebaseMessaging.getToken();
     print(tokenDevice);
 
-    var response = await http.post(ENTRYPOINT + "/register-push/" + os,
+    var response = await client.post(ENTRYPOINT + "/register-push/" + os,
         body: {"username": username, "token": tokenDevice});
 
     if (response.statusCode != 200) {
@@ -75,11 +72,15 @@ class Api {
     return true;
   }
 
-
-  static Future<List<String>> tryCreateAccount(
-      String username, String pass, String email,String name,String organization) async {
-    var response = await http.post(ENTRYPOINT + "/users/",
-        body: {"username": username, "password": pass, "email": email,"organization": organization,"first_name": name});
+  static Future<List<String>> tryCreateAccount(String username, String pass,
+      String email, String name, String organization) async {
+    var response = await client.post(ENTRYPOINT + "/users/", body: {
+      "username": username,
+      "password": pass,
+      "email": email,
+      "organization": organization,
+      "first_name": name
+    });
     if (response.statusCode == 201) {
       tryLogin(username, pass);
       return [];
@@ -132,7 +133,7 @@ class Api {
   }
 
   static Future<List<User>> fetchUsersRequest() async {
-    final response = await http.get(ENTRYPOINT + '/users',
+    final response = await client.get(ENTRYPOINT + '/users',
         headers: {"Authorization": "Token " + (await getToken())});
     var users;
     if (response.statusCode == 200) {
@@ -146,7 +147,7 @@ class Api {
   }
 
   static Future<String> updateTypeUser(id, newType) async {
-    var response = await http.patch(ENTRYPOINT + '/users/' + id + '/',
+    var response = await client.patch(ENTRYPOINT + '/users/' + id + '/',
         headers: {
           "Authorization": "Token " + (await getToken()),
           'Content-Type': 'application/json; charset=UTF-8',
@@ -331,15 +332,17 @@ class Api {
     });
   }
 
-  static Future<List<String>> tryChangePassword(
-      String newPassword) async {
-    var response = await http.post(ENTRYPOINT + "/users/"+Helpers.loggedInUser.pk.toString()+"/set_password/",headers: {"Authorization": "Token " + (await getToken())},
+  static Future<List<String>> tryChangePassword(String newPassword) async {
+    var response = await client.post(
+        ENTRYPOINT +
+            "/users/" +
+            Helpers.loggedInUser.pk.toString() +
+            "/set_password/",
+        headers: {"Authorization": "Token " + (await getToken())},
         body: {"password": newPassword});
     if (response.statusCode == 200) {
       return [];
     }
     return _parseErrorDict(utf8.decode(response.bodyBytes));
   }
-  
 }
-

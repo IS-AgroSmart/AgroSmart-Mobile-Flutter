@@ -17,13 +17,13 @@ class User {
       });
 
   factory User.fromMap(Map<String, dynamic> json) {
-    if (!json.containsKey("username")) throw ArgumentError("username");
-    if (!json.containsKey("email")) throw ArgumentError("email");
-    if (!json.containsKey("first_name")) throw ArgumentError("first_name");
-    if (!json.containsKey("organization")) throw ArgumentError("organization");
-    if (!json.containsKey("is_staff")) throw ArgumentError("is_staff");
-    if (!json.containsKey("type")) throw ArgumentError("type");
-    if (!json.containsKey("pk")) throw ArgumentError("pk");
+    if (!json.containsKey("username")) throw ArgumentError("username not provided");
+    if (!json.containsKey("email")) throw ArgumentError("email not provided");
+    if (!json.containsKey("first_name")) throw ArgumentError("first_name not provided");
+    if (!json.containsKey("organization")) throw ArgumentError("organization not provided");
+    if (!json.containsKey("is_staff")) throw ArgumentError("is_staff not provided");
+    if (!json.containsKey("type")) throw ArgumentError("type not provided");
+    if (!json.containsKey("pk")) throw ArgumentError("pk not provided");
 
     return User(
       username: json["username"],
