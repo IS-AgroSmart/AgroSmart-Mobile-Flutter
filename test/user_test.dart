@@ -29,7 +29,6 @@ void main() {
         "first_name": "Me",
         "username": "foo",
         "organization": "Acme Corp.",
-        "first_name": "Great Name",
         "is_staff": false,
         "pk": 1,
         "type": "ADMIN"

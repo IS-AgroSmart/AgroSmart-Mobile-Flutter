@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_app/helpers.dart';
 import 'package:flutter_app/models/user.dart';
 import 'package:flutter_app/password_reset_requested_widget.dart';
-import 'package:flutter_app/profile.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -21,7 +20,7 @@ void main() {
       organization: "Acme Corp",
       isStaff: false,
       type: "ACTIVE");
-  var widget, mockObserver;
+  var mockObserver;
   setUp(() {
     mockObserver = MockNavigatorObserver();
 //    widget =
