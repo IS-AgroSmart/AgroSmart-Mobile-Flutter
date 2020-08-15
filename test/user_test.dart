@@ -28,6 +28,7 @@ void main() {
         "email": "foo@example.com",
         "first_name": "Me",
         "username": "foo",
+        "organization": "Acme Corp.",
         "is_staff": false,
         "pk": 1,
         "type": "ADMIN"
@@ -44,7 +45,9 @@ void main() {
       "email": "bar",
       "is_staff": false,
       "type": "ADMIN",
-      "pk": 1
+      "pk": 1,
+      "first_name": "My Name",
+      "organization": "Acme Corp.",
     });
     expect(u.username, "foo");
     expect(u.email, "bar");
@@ -57,7 +60,7 @@ void main() {
   test("Should parse single user", () {
     expect(
         User.parse(
-                '[{"username": "foo", "email": "bar", "is_staff": false, "pk": 1, "type": "ADMIN"}]')
+                '[{"username": "foo", "email": "bar", "is_staff": false, "pk": 1, "type": "ADMIN", "first_name": "My Name", "organization": "Acme Corp."}]')
             .length,
         1);
   });
@@ -65,7 +68,7 @@ void main() {
   test("Should parse multiple users", () {
     expect(
         User.parse(
-                '[{"username":"a","email":"a", "is_staff": false, "pk": 1, "type": "ADMIN"}, {"username":"b","email":"b", "is_staff": false, "pk": 2, "type": "ADMIN"}]')
+                '[{"username":"a","email":"a", "is_staff": false, "pk": 1, "type": "ADMIN", "first_name": "My Name", "organization": "Acme Corp."}, {"username":"b","email":"b", "is_staff": false, "pk": 2, "type": "ADMIN", "first_name": "My Other Name", "organization": "Acme Corp."}]')
             .length,
         2);
   });

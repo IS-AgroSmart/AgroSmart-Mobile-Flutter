@@ -27,23 +27,25 @@ class ChangePasswordForm extends StatefulWidget {
 
 class _ChangePasswordFormState extends State<ChangePasswordForm> {
   final _formKey = GlobalKey<FormState>();
-  String  _pass, _repeatedPass;
+  String _pass, _repeatedPass;
   String _errorMessage = "";
 
   String isNotEmptyValidator(message, String value) {
     return value.isEmpty ? message : null;
   }
 
-  String isDifferentPassword(message,String value){
-    if( _pass == value){
+  String isDifferentPassword(message, String value) {
+    if (_pass == value) {
       return null;
     }
     return message;
   }
 
-  String passwordValidator(value) => isNotEmptyValidator("Escriba una contraseña válida", value);
+  String passwordValidator(value) =>
+      isNotEmptyValidator("Escriba una contraseña válida", value);
 
-  String repeatedPasswordValidator(value) => isDifferentPassword("Contraseñas no coinciden", value);
+  String repeatedPasswordValidator(value) =>
+      isDifferentPassword("Contraseñas no coinciden", value);
 
   @override
   Widget build(BuildContext context) {
@@ -64,24 +66,27 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
                   onChanged: (val) => _pass = val.trim()),
               TextFormField(
                   obscureText: true,
-                  validator:  repeatedPasswordValidator,
-                  decoration: InputDecoration(hintText: "Repetir Contraseña Nueva"),
+                  validator: repeatedPasswordValidator,
+                  decoration:
+                      InputDecoration(hintText: "Repetir Contraseña Nueva"),
                   onChanged: (val) => _repeatedPass = val.trim()),
               Row(
-                  mainAxisAlignment:
-                  MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
                     RaisedButton(
-                        child: Text("Aceptar"),
+                      child: Text("Aceptar"),
                       onPressed: () async {
                         if (_formKey.currentState.validate()) {
                           _formKey.currentState.save();
                           try {
-                              var errorMessages = await Api.tryChangePassword(_repeatedPass);
-                              setState(() => _errorMessage = errorMessages.join("\n"));
-                              //If success == true, account creation was OK. Transition to Account Creation Successful screen
-                              if (errorMessages.isEmpty)
-                                Navigator.pushReplacementNamed(context, Profile.routeName);
+                            var errorMessages =
+                                await Api.tryChangePassword(_repeatedPass);
+                            setState(
+                                () => _errorMessage = errorMessages.join("\n"));
+                            //If success == true, account creation was OK. Transition to Password Change Successful screen
+                            if (errorMessages.isEmpty)
+                              Navigator.pushReplacementNamed(
+                                  context, Profile.routeName);
                           } on SocketException catch (e) {
                             print(e);
                             setState(() => _errorMessage = "Error de conexión");
@@ -90,12 +95,11 @@ class _ChangePasswordFormState extends State<ChangePasswordForm> {
                       },
                     ),
                     RaisedButton(
-                        child: Text("Cancelar"),
-                      onPressed: () async =>
-                          Navigator.pushReplacementNamed(context, Profile.routeName),
+                      child: Text("Cancelar"),
+                      onPressed: () async => Navigator.pushReplacementNamed(
+                          context, Profile.routeName),
                     ),
-                  ]
-              )
+                  ])
             ])));
   }
 }

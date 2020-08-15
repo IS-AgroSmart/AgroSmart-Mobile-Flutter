@@ -23,13 +23,14 @@ class AppDrawer extends Drawer {
             accountName: Text(Helpers.loggedInUser.username),
             accountEmail: Text(Helpers.loggedInUser.email),
           ),
-          ListTile(
-            title: Text("Crear nuevo vuelo"),
-            leading: Icon(Icons.add_circle_outline),
-            onTap: () => Navigator.pushReplacementNamed(
-                context, NewFlightWidget.routeName),
+          if (["ACTIVE", "ADMIN"].contains(Helpers.loggedInUser.type))
+            ListTile(
+              title: Text("Crear nuevo vuelo"),
+              leading: Icon(Icons.add_circle_outline),
+              onTap: () => Navigator.pushReplacementNamed(
+                  context, NewFlightWidget.routeName),
 //            trailing: Icon(Icons.arrow_forward),
-          ),
+            ),
           Divider(),
           ListTile(
             title: Text("Vuelos completos"),
@@ -81,8 +82,8 @@ class AppDrawer extends Drawer {
           ListTile(
             title: Text("Perfil"),
             leading: Icon(Icons.person),
-            onTap: () => Navigator.pushReplacementNamed(
-                context, Profile.routeName),
+            onTap: () =>
+                Navigator.pushReplacementNamed(context, Profile.routeName),
           ),
           ListTile(
             title: Text("Cerrar sesión"),

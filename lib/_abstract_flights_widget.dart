@@ -6,6 +6,7 @@ import 'package:flutter_app/new_flight.dart';
 import 'api.dart';
 import 'drawer.dart';
 import 'flight_detail_widget.dart';
+import 'helpers.dart';
 import 'models/flight.dart';
 
 abstract class AbstractFlightsWidget extends StatefulWidget {
@@ -45,10 +46,14 @@ abstract class AbstractFlightsState extends State<AbstractFlightsWidget> {
           title: Text(appTitle),
         ),
         drawer: AppDrawer(),
-        floatingActionButton: FloatingActionButton(
-          onPressed: () =>
-              Navigator.pushNamed(context, NewFlightWidget.routeName),
-          child: Icon(Icons.add),
+        floatingActionButton: Visibility(
+          // Only show if loggedInUser not DEMO
+          visible: Helpers.loggedInUser.type != "DEMO_USER",
+          child: FloatingActionButton(
+            onPressed: () =>
+                Navigator.pushNamed(context, NewFlightWidget.routeName),
+            child: Icon(Icons.add),
+          ),
         ),
         body: StreamBuilder<List<Flight>>(
           stream: _flightsStream.stream,
@@ -105,10 +110,10 @@ abstract class AbstractFlightsState extends State<AbstractFlightsWidget> {
                                   onPressed: () => Api.tryRestoreFlight(flight)
                                       .then((_) async => _loadFlights())
                                       .catchError((error) => Scaffold.of(
-                                      _context)
-                                      .showSnackBar(SnackBar(
-                                      content: Text(
-                                          'Error al restaurar el vuelo'))))),
+                                              _context)
+                                          .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  'Error al restaurar el vuelo'))))),
                             if (deleteMessage.isNotEmpty)
                               IconButton(
                                 icon: Icon(Icons.delete),

@@ -45,8 +45,13 @@ void main() {
 
     await tester.enterText(find.byType(TextFormField).first, "myusername");
     await tester.enterText(
-        find.byType(TextFormField).at(1), "myemail@example.com");
-    await tester.enterText(find.byType(TextFormField).last, "mypassword");
+        find.byType(TextFormField).at(1), "Full Name");
+    await tester.enterText(
+        find.byType(TextFormField).at(2), "myemail@example.com");
+    await tester.enterText(
+        find.byType(TextFormField).at(3), "mypassword");
+    await tester.enterText(
+        find.byType(TextFormField).at(4), "Acme Corp.");
 
     await tester.tap(find.byType(RaisedButton));
     await tester.pump();
@@ -74,8 +79,13 @@ void main() {
 
     await tester.enterText(find.byType(TextFormField).first, "myusername");
     await tester.enterText(
-        find.byType(TextFormField).at(1), "myemail@example.com");
-    await tester.enterText(find.byType(TextFormField).last, "mypassword");
+        find.byType(TextFormField).at(1), "Full Name");
+    await tester.enterText(
+        find.byType(TextFormField).at(2), "myemail@example.com");
+    await tester.enterText(
+        find.byType(TextFormField).at(3), "mypassword");
+    await tester.enterText(
+        find.byType(TextFormField).at(4), "Acme Corp.");
 
     await tester.tap(find.byType(RaisedButton));
     await tester.pump();
@@ -94,8 +104,13 @@ void main() {
 
     await tester.enterText(find.byType(TextFormField).first, "myusername");
     await tester.enterText(
-        find.byType(TextFormField).at(1), "myemail@example.com");
-    await tester.enterText(find.byType(TextFormField).last, "mypassword");
+        find.byType(TextFormField).at(1), "Full Name");
+    await tester.enterText(
+        find.byType(TextFormField).at(2), "myemail@example.com");
+    await tester.enterText(
+        find.byType(TextFormField).at(3), "mypassword");
+    await tester.enterText(
+        find.byType(TextFormField).at(4), "Acme Corp.");
 
     await tester.tap(find.byType(RaisedButton));
     await tester.pump();
