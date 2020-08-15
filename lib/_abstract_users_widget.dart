@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:fluttertoast/fluttertoast.dart';
 
-import 'package:awesome_dialog/awesome_dialog.dart';
 import 'package:flutter/material.dart';
 import 'api.dart';
 
@@ -155,17 +154,38 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
         message = "Eliminada";
       }
       type = 'DELETED';
-      return AwesomeDialog(
+      return showDialog<void>(
         context: context,
-        animType: AnimType.BOTTOMSLIDE,
-        dialogType: DialogType.WARNING,
-        title: '¿Realmente quiere ' + action + " la solicitud?",
-        desc: 'La solicitud de ' + user.username + " va a ser " + message,
-        btnCancelText: "Cancelar",
-        btnCancelOnPress: () {},
-        btnOkText: "Continuar",
-        btnOkOnPress: () async => helper(user, type),
-      ).show();
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('¿Realmente quiere ' + action + " la solicitud?"),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text('La solicitud de ' +
+                      user.username +
+                      " va a ser " +
+                      message),
+                ],
+              ),
+            ),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('No'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text('Sí'),
+                textColor: Colors.red,
+                onPressed: () async => helper(user, type),
+              ),
+            ],
+          );
+        },
+      );
     } else {
       type = "ACTIVE";
       helper(user, type);
