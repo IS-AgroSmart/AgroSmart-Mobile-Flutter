@@ -2,7 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:downloads_path_provider/downloads_path_provider.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_app/helpers.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
@@ -23,6 +23,17 @@ class Api {
   // ignore: cancel_subscriptions
   static StreamSubscription connectivitySubscription;
   static var client = http.Client();
+
+  static const platform =
+      const MethodChannel('com.droneapp.flutter_app/downloads');
+
+  static Future<String> _getDownloadsFolder() async {
+    try {
+      return await platform.invokeMethod('getDownloadsFolder');
+    } on PlatformException {
+      return "";
+    }
+  }
 
   static Future<bool> tryLogin(String username, String pass) async {
     var response = await client.post(ENTRYPOINT + "/api-auth",
@@ -263,12 +274,10 @@ class Api {
     };
 
     if (!(await _askPermission())) return;
-    Directory downloadDir = Directory(
-        (await DownloadsPathProvider.downloadsDirectory).path +
-            "/DroneApp/${f.name}");
+    Directory downloadDir =
+        Directory((await _getDownloadsFolder()) + "/DroneApp/${f.name}");
     if (!downloadDir.existsSync()) await downloadDir.create(recursive: true);
     String saveDir = downloadDir.path;
-//    String saveDir = "$appDataDir/${f.uuid}/${result.toString()}";
     print(saveDir);
     final url = "$ENTRYPOINT/downloads/${f.uuid}/${urls[result]}";
 
@@ -297,9 +306,8 @@ class Api {
     details += details.length > 0 ? "/" : "";
     if (!(await _askPermission())) return;
 
-    Directory downloadDir = Directory(
-        (await DownloadsPathProvider.downloadsDirectory).path +
-            "/DroneApp/${f.name}");
+    Directory downloadDir =
+        Directory((await _getDownloadsFolder()) + "/DroneApp/${f.name}");
     if (!downloadDir.existsSync()) await downloadDir.create(recursive: true);
     String saveDir = downloadDir.path;
 
