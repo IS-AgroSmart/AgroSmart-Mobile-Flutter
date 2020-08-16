@@ -153,7 +153,7 @@ void main() {
       (WidgetTester tester) async {
     await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());
 
-    var deleteButton = find.byKey(Key("reject-icon-3"));
+    var deleteButton = find.byKey(Key("icon2-user-3"));
     expect(deleteButton, findsOneWidget);
   });
 
@@ -161,7 +161,7 @@ void main() {
       (WidgetTester tester) async {
     await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());
 
-    var rejectButton = find.byKey(Key("reject-icon-3"));
+    var rejectButton = find.byKey(Key("icon2-user-3"));
     expect(find.text("¿Realmente quiere Rechazar la solicitud?"), findsNothing);
     await tester.tap(rejectButton);
     await tester.pumpAndSettle();
@@ -180,7 +180,7 @@ void main() {
         .thenAnswer((_) async => http.Response("", 200));
     await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());
 
-    var rejectButton = find.byKey(Key("reject-icon-3"));
+    var rejectButton = find.byKey(Key("icon2-user-3"));
     await tester.tap(rejectButton);
     await tester.pumpAndSettle();
     await tester.tap(find.text("Sí"));
@@ -201,7 +201,7 @@ void main() {
         .thenThrow(SocketException("dummy"));
     await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());
 
-    var rejectButton = find.byKey(Key("reject-icon-3"));
+    var rejectButton = find.byKey(Key("icon2-user-3"));
     await tester.tap(rejectButton);
     await tester.pumpAndSettle();
 
@@ -216,7 +216,7 @@ void main() {
       (WidgetTester tester) async {
     await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());
 
-    var acceptButton = find.byKey(Key("accept-icon-3"));
+    var acceptButton = find.byKey(Key("icon1-user-3"));
     expect(acceptButton, findsOneWidget);
   });
 
@@ -227,7 +227,7 @@ void main() {
         .thenAnswer((_) async => http.Response("", 200));
     await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());
 
-    var acceptButton = find.byKey(Key("accept-icon-3"));
+    var acceptButton = find.byKey(Key("icon1-user-3"));
     await tester.tap(acceptButton);
     await tester.pumpAndSettle();
 
@@ -246,7 +246,7 @@ void main() {
         .thenThrow(SocketException("dummy"));
     await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());
 
-    var acceptButton = find.byKey(Key("accept-icon-3"));
+    var acceptButton = find.byKey(Key("icon1-user-3"));
     await tester.tap(acceptButton);
     await tester.pumpAndSettle();
 
