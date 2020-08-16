@@ -21,13 +21,13 @@ class NewFlightWidget extends StatelessWidget {
 
 class NewFlightForm extends StatefulWidget {
   @override
-  _NewFlightFormState createState() => _NewFlightFormState();
+  NewFlightFormState createState() => NewFlightFormState();
 }
 
-class _NewFlightFormState extends State<NewFlightForm> {
+class NewFlightFormState extends State<NewFlightForm> {
   final _formKey = GlobalKey<FormState>();
   String _name, _description;
-  Camera _camera;
+  Camera camera;
   DateTime _date;
   bool _success = true;
 
@@ -82,14 +82,14 @@ class _NewFlightFormState extends State<NewFlightForm> {
                 validator: dateValidator,
               ),
               DropdownButtonFormField<Camera>(
-                value: _camera,
+                value: camera,
                 items: Camera.values
                     .map((camera) => DropdownMenuItem(
                           value: camera,
                           child: Text(CameraHelper.description(camera)),
                         ))
                     .toList(),
-                onChanged: (newValue) => setState(() => _camera = newValue),
+                onChanged: (newValue) => setState(() => camera = newValue),
                 decoration: const InputDecoration(
                   hintText: 'Seleccione una cámara',
                   labelText: 'Cámara',

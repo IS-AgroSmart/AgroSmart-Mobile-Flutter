@@ -2,7 +2,9 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/api.dart';
+import 'package:flutter_app/create_account_widget.dart';
 import 'package:flutter_app/login_widget.dart';
+import 'package:flutter_app/request_password_reset_widget.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:http/http.dart' as http;
@@ -10,9 +12,21 @@ import 'package:http/http.dart' as http;
 import 'mocks.dart';
 
 void main() {
-  var widget;
+  var widget, mockObserver;
   setUp(() {
-    widget = MaterialApp(home: LoginWidget());
+    mockObserver = MockNavigatorObserver();
+
+    final key = GlobalKey<NavigatorState>();
+    widget = MaterialApp(
+      home: LoginWidget(),
+      navigatorKey: key,
+      navigatorObservers: [mockObserver],
+      routes: {
+        CreateAccountWidget.routeName: (context) => CreateAccountWidget(),
+        RequestPasswordResetWidget.routeName: (context) =>
+            RequestPasswordResetWidget()
+      },
+    );
   });
 
   testWidgets('LoginWidget has a title and buttons',
@@ -65,8 +79,8 @@ void main() {
 
     var client = MockClient();
     Api.client = client;
-    when(client.post(any, body: anyNamed("body")))
-        .thenAnswer((_) async => http.Response(jsonEncode({"token": "mynewtoken"}), 200));
+    when(client.post(any, body: anyNamed("body"))).thenAnswer(
+        (_) async => http.Response(jsonEncode({"token": "mynewtoken"}), 200));
 
     await tester.enterText(find.byType(TextFormField).first, "myusername");
     await tester.enterText(find.byType(TextFormField).last, "mypassword");
@@ -119,5 +133,36 @@ void main() {
     expect(find.text("Escriba una contraseña"), findsOneWidget);
 
     verifyNever(client.post(any));
+  });
+
+  testWidgets("LoginWidget navigates to Create Account",
+      (WidgetTester tester) async {
+    await tester.pumpWidget(widget);
+    verify(mockObserver.didPush(any, any)); // HACK: Flush the first navigation
+
+    expect(find.byType(CreateAccountWidget), findsNothing);
+    var newAccountButton = find.widgetWithText(InkWell, "Crear cuenta");
+    expect(newAccountButton, findsOneWidget);
+    await tester.tap(newAccountButton);
+    await tester.pumpAndSettle();
+
+    verify(mockObserver.didReplace(
+        newRoute: anyNamed("newRoute"), oldRoute: anyNamed("oldRoute")));
+    expect(find.byType(CreateAccountWidget), findsOneWidget);
+  });
+
+  testWidgets("LoginWidget navigates to Forgot Password",
+      (WidgetTester tester) async {
+    await tester.pumpWidget(widget);
+    verify(mockObserver.didPush(any, any)); // HACK: Flush the first navigation
+
+    expect(find.byType(RequestPasswordResetWidget), findsNothing);
+    var newAccountButton = find.widgetWithText(InkWell, "Olvidé mi contraseña");
+    expect(newAccountButton, findsOneWidget);
+    await tester.tap(newAccountButton);
+    await tester.pumpAndSettle();
+
+    verify(mockObserver.didPush(any, any));
+    expect(find.byType(RequestPasswordResetWidget), findsOneWidget);
   });
 }

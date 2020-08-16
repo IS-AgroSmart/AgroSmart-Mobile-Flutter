@@ -129,6 +129,7 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
               style: TextStyle(color: Colors.red),
             );
           if (snapshot.hasData && snapshot.data.isNotEmpty) {
+            var _context = context;
             return RefreshIndicator(
                 onRefresh: () async => _loadUsers(),
                 child: ListView.builder(
@@ -146,21 +147,25 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
                       shadowColor: Colors.amberAccent,
                       child: ListTile(
                         leading: iconUser,
-                        title: Text('${user.username}\n\n'),
+                        title: Text('${user.username}'),
                         subtitle: Text(
                             "Email: " + '${user.email}' + "\n\n" + description),
                         trailing: Wrap(spacing: 0, children: <Widget>[
                           IconButton(
+                            key: Key("icon1-user-${user.pk}"),
                             icon: icon1,
                             color: Colors.green,
                             tooltip: textIcon1,
-                            onPressed: () async => {_action(user, textIcon1)},
+                            onPressed: () async =>
+                                {_action(user, textIcon1, _context)},
                           ),
                           IconButton(
+                            key: Key("icon2-user-${user.pk}"),
                             icon: icon2,
                             color: Colors.red,
                             tooltip: textIcon2,
-                            onPressed: () async => {_action(user, textIcon2)},
+                            onPressed: () async =>
+                                {_action(user, textIcon2, _context)},
                           ),
                           Visibility(
                             visible: iconVisible,
@@ -169,7 +174,7 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
                                   color: Colors.red, semanticLabel: "Bloquear"),
                               tooltip: "Bloquear",
                               onPressed: () async => {
-                                _action(user, 'Bloquear'),
+                                _action(user, 'Bloquear', _context),
                               },
                             ),
                           ),
@@ -225,7 +230,7 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
     );
   }
 
-  Future<void> _action(User user, String action) async {
+  Future<void> _action(User user, String action, _context) async {
     var message = '';
     var type = '';
     if (action != 'Aceptar') {
@@ -272,7 +277,7 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
               FlatButton(
                 child: Text('Sí'),
                 textColor: Colors.red,
-                onPressed: () async => helper(user, type, context),
+                onPressed: () async => helper(user, type, _context),
               ),
             ],
           );
@@ -280,17 +285,21 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
       );
     } else {
       type = "ACTIVE";
-      helper(user, type, context);
+      helper(user, type, _context);
     }
   }
 
-  helper(User user, type, context) async {
+  helper(User user, type, _context) async {
     if (type == 'eliminar') {
       Api.deletedUser(user.pk.toString())
-          .then((value) => this.showToast(value));
+          .then((value) => this.showToast(value))
+          .catchError((error) => Scaffold.of(_context).showSnackBar(
+              SnackBar(content: Text('Error al eliminar usuario'))));
     } else {
       Api.updateTypeUser(user.pk.toString(), type)
-          .then((value) => this.showToast(value));
+          .then((value) => this.showToast(value))
+          .catchError((error) => Scaffold.of(_context).showSnackBar(
+              SnackBar(content: Text('Error al configurar usuario'))));
     }
     if (type != 'ACTIVE') {
       Navigator.of(context).pop();
