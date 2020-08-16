@@ -70,6 +70,7 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
                 style: TextStyle(color: Colors.red),
               );
             if (snapshot.hasData && snapshot.data.isNotEmpty) {
+              var _context = context;
               return RefreshIndicator(
                   onRefresh: () async => _loadUsers(),
                   child: ListView.builder(
@@ -90,31 +91,35 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
                             Icons.account_circle,
                             size: 60,
                           ),
-                          title: Text('${user.username}\n\n'),
+                          title: Text('${user.username}'),
                           subtitle: Text("Email: " +
                               '${user.email}' +
                               "\n\n" +
                               "Descripción: El usuario aun no ha sido aceptado\n\n"),
                           trailing: Wrap(spacing: 0, children: <Widget>[
                             IconButton(
+                              key: Key("accept-icon-${user.pk}"),
                               icon: Icon(Icons.check_circle),
                               color: Colors.green,
                               tooltip: "Aceptar",
-                              onPressed: () async => {_action(user, 'Aceptar')},
+                              onPressed: () async =>
+                                  {_action(user, 'Aceptar', _context)},
                             ),
                             IconButton(
+                              key: Key("reject-icon-${user.pk}"),
                               icon: Icon(Icons.cancel),
                               color: Colors.red,
                               tooltip: "Rechazar",
                               onPressed: () async =>
-                                  {_action(user, 'Rechazar')},
+                                  {_action(user, 'Rechazar', _context)},
                             ),
                             IconButton(
+                              key: Key("block-icon-${user.pk}"),
                               icon: Icon(Icons.block,
                                   color: Colors.red, semanticLabel: "Bloquear"),
                               tooltip: "Bloquear",
                               onPressed: () async => {
-                                _action(user, 'Bloquear'),
+                                _action(user, 'Bloquear', _context),
                               },
                             ),
                           ]),
@@ -144,7 +149,7 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
         ));
   }
 
-  Future<void> _action(User user, String action) async {
+  Future<void> _action(User user, String action, _context) async {
     var message = '';
     var type = '';
     if (action != 'Aceptar') {
@@ -180,7 +185,7 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
               FlatButton(
                 child: Text('Sí'),
                 textColor: Colors.red,
-                onPressed: () async => helper(user, type),
+                onPressed: () async => helper(user, type, _context),
               ),
             ],
           );
@@ -188,13 +193,15 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
       );
     } else {
       type = "ACTIVE";
-      helper(user, type);
+      helper(user, type, _context);
     }
   }
 
-  helper(User user, type) async {
+  helper(User user, type, _context) async {
     Api.updateTypeUser(user.pk.toString(), type)
-        .then((value) => this.showToast(value));
+        .then((value) => this.showToast(value))
+        .catchError((error) => Scaffold.of(_context).showSnackBar(
+            SnackBar(content: Text('Error al configurar usuario'))));
     _loadUsers();
   }
 }

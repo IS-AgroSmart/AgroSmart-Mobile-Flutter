@@ -48,6 +48,32 @@ void main() {
       },
       {
         "uuid": "uuidfoo2",
+        "name": "failedflight",
+        "annotations": "some notes",
+        "date": "2020-01-01",
+        "processing_time": 6000,
+        "state": "ERROR",
+        "nodeodm_info": {
+          "progress": 100,
+        },
+        "camera": "RGB",
+        "deleted": false
+      },
+      {
+        "uuid": "uuidfoo3",
+        "name": "canceledflight",
+        "annotations": "some notes",
+        "date": "2020-01-01",
+        "processing_time": 6000,
+        "state": "CANCELED",
+        "nodeodm_info": {
+          "progress": 100,
+        },
+        "camera": "RGB",
+        "deleted": false
+      },
+      {
+        "uuid": "uuidfoo2",
         "name": "anotherflight",
         "annotations": "some other notes",
         "date": "2019-02-02",
@@ -181,17 +207,17 @@ void main() {
     expect(find.text("anotherflight"), findsNothing);
   });
 
-  testWidgets("CompletedFlightsWidget shows check icon",
+  testWidgets("CompletedFlightsWidget shows status icons",
       (WidgetTester tester) async {
     await pumpArgumentWidget(tester,
         args: null, child: CompletedFlightsWidget());
 
     var ws = tester.allWidgets;
-    expect(
-        ws
-            .where((w) => w is Icon)
-            .where((w) => (w as Icon).icon == Icons.check),
-        hasLength(1));
+    var findIcon = (IconData i) =>
+        ws.where((w) => w is Icon).where((w) => (w as Icon).icon == i);
+    expect(findIcon(Icons.check), hasLength(1));
+    expect(findIcon(Icons.error), hasLength(1));
+    expect(findIcon(Icons.cancel), hasLength(1));
   });
 
   testWidgets("CompletedFlightsWidget shows trash icon",
@@ -320,9 +346,10 @@ void main() {
         args: null, child: CompletedFlightsWidget());
     verify(mockObserver.didPush(any, any)); // HACK: Flush the first navigation
 
-    expect(find.byType(ListTile), findsOneWidget);
+    expect(find.byType(ListTile),
+        findsNWidgets(3)); // One complete, one failed, one canceled
 
-    await tester.tap(find.byType(ListTile));
+    await tester.tap(find.byType(ListTile).first);
     await tester.pumpAndSettle();
 
     verify(mockObserver.didPush(any, any));

@@ -12,7 +12,7 @@ class UserRequestsWidget extends AbstractUersWidget {
 }
 
 class _CompletedUsersState extends AbstractUsersState {
-  final appTitle = "Solictudes de Usuarios";
+  final appTitle = "Solicitudes de Usuarios";
 
   @override
   void initState() {

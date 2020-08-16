@@ -106,6 +106,7 @@ abstract class AbstractFlightsState extends State<AbstractFlightsWidget> {
                           trailing: Wrap(spacing: 0, children: <Widget>[
                             if (flight.deleted)
                               IconButton(
+                                  key: Key("restore-icon-${flight.uuid}"),
                                   icon: Icon(Icons.restore),
                                   onPressed: () => Api.tryRestoreFlight(flight)
                                       .then((_) async => _loadFlights())
