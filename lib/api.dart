@@ -157,6 +157,28 @@ class Api {
     }
   }
 
+  static Future<List<User>> fetchUsersRequestDeleted() async {
+    final response = await client.get(ENTRYPOINT + '/users',
+        headers: {"Authorization": "Token " + (await getToken())});
+    var users;
+    if (response.statusCode == 200) {
+      users =
+          User.parse(response.body).where((u) => u.type == "DELETED").toList();
+      return users;
+    } else {
+      throw Exception(response.body);
+    }
+  }
+
+  static Future<String> deletedUser(String idUser) async {
+    final response = await client.delete(ENTRYPOINT + '/users/' + idUser + '/',
+        headers: {"Authorization": "Token " + (await getToken())});
+    if (response.statusCode != 200) {
+      return "La solicitud ha fallado, por favor intente mas tarde";
+    }
+    return "La solicitud se ha completado con exito\n si los cambios no se muestran por favor recarge la pagina..";
+  }
+
   static Future<String> updateTypeUser(id, newType) async {
     var response = await client.patch(ENTRYPOINT + '/users/' + id + '/',
         headers: {
