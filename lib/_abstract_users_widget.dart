@@ -15,12 +15,27 @@ abstract class AbstractUersWidget extends StatefulWidget {
 
 abstract class AbstractUsersState extends State<AbstractUersWidget> {
   Future<List<User>> Function() usersFutureCallable;
+  Future<List<User>> Function() usersFutureCallableRequestsDeleted;
+
+  static int index = 0;
   Future<List<User>> usersFuture;
   StreamController<List<User>> _usersStream;
   List<User> users;
   String appTitle;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   String textFilter = '';
+  static int _selectedIndex = 0;
+  double sizeIconUser = 60;
+  Color iconColorUser;
+  Color cardColor = Colors.lightBlue[50];
+  Icon icon1;
+  Icon icon2;
+  Icon iconUser;
+  String textIcon1;
+  String textIcon2;
+  bool iconVisible = true;
+  bool selected1 = false;
+  String description = '';
 
   @override
   void initState() {
@@ -31,7 +46,37 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
   }
 
   void _loadUsers() async {
-    users = await usersFutureCallable();
+    if (_selectedIndex == 0) {
+      //for request pending
+      users = await usersFutureCallable();
+      icon1 = Icon(Icons.check_circle);
+      iconColorUser = Colors.black;
+      iconVisible = true;
+      textIcon1 = 'Aceptar';
+
+      icon2 = Icon(Icons.cancel);
+      textIcon2 = 'Rechazar';
+
+      description = "Descripción: El usuario aun no ha sido aceptado\n\n";
+    } else {
+      //for request deleted
+      iconVisible = false;
+      users = await usersFutureCallableRequestsDeleted();
+      icon1 = Icon(Icons.restore);
+      iconColorUser = Colors.red;
+      textIcon1 = 'Restaurar';
+
+      icon2 = Icon(Icons.delete_forever);
+      textIcon2 = 'Eliminar';
+
+      description =
+          'Descripción:La solicitud del usuario esta eliminada eliga que acción tomar\n\n';
+    }
+    iconUser = Icon(
+      Icons.account_circle,
+      size: sizeIconUser,
+      color: iconColorUser,
+    );
     if (textFilter.isNotEmpty) {
       _usersStream.add(users
           .where((u) =>
@@ -53,68 +98,73 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
         textColor: Colors.white);
   }
 
+  void _onItemTapped(int index) {
+    if (index == 0) {
+      selected1 = false;
+    } else {
+      selected1 = true;
+    }
+    setState(() {
+      _selectedIndex = index;
+    });
+    textFilter = '';
+    _usersStream.add(null); //para hacer que la pagina se recarge
+    _loadUsers();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: scaffoldKey,
-        appBar: AppBar(
-          title: Text(appTitle),
-        ),
-        drawer: AppDrawer(),
-        body: StreamBuilder<List<User>>(
-          stream: _usersStream.stream,
-          builder: (context, snapshot) {
-            if (snapshot.hasError)
-              return Text(
-                snapshot.error.toString(),
-                style: TextStyle(color: Colors.red),
-              );
-            if (snapshot.hasData && snapshot.data.isNotEmpty) {
-              var _context = context;
-              return RefreshIndicator(
-                  onRefresh: () async => _loadUsers(),
-                  child: ListView.builder(
-                    physics: const AlwaysScrollableScrollPhysics(),
-                    itemCount: snapshot.data.length,
-                    itemBuilder: (context, index) {
-                      final user = snapshot.data[index];
-                      return Card(
-                        shape: RoundedRectangleBorder(
-                          side: BorderSide(color: Colors.white70, width: 1),
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        color: Colors.lightBlue[50],
-                        margin: EdgeInsets.all(20.0),
-                        shadowColor: Colors.amberAccent,
-                        child: ListTile(
-                          leading: Icon(
-                            Icons.account_circle,
-                            size: 60,
+      key: scaffoldKey,
+      appBar: AppBar(
+        title: Text(appTitle),
+      ),
+      drawer: AppDrawer(),
+      body: StreamBuilder<List<User>>(
+        stream: _usersStream.stream,
+        builder: (context, snapshot) {
+          if (snapshot.hasError)
+            return Text(
+              snapshot.error.toString(),
+              style: TextStyle(color: Colors.red),
+            );
+          if (snapshot.hasData && snapshot.data.isNotEmpty) {
+            return RefreshIndicator(
+                onRefresh: () async => _loadUsers(),
+                child: ListView.builder(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  itemCount: snapshot.data.length,
+                  itemBuilder: (context, index) {
+                    final user = snapshot.data[index];
+                    return Card(
+                      shape: RoundedRectangleBorder(
+                        side: BorderSide(color: Colors.white70, width: 1),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      color: cardColor,
+                      margin: EdgeInsets.all(20.0),
+                      shadowColor: Colors.amberAccent,
+                      child: ListTile(
+                        leading: iconUser,
+                        title: Text('${user.username}\n\n'),
+                        subtitle: Text(
+                            "Email: " + '${user.email}' + "\n\n" + description),
+                        trailing: Wrap(spacing: 0, children: <Widget>[
+                          IconButton(
+                            icon: icon1,
+                            color: Colors.green,
+                            tooltip: textIcon1,
+                            onPressed: () async => {_action(user, textIcon1)},
                           ),
-                          title: Text('${user.username}'),
-                          subtitle: Text("Email: " +
-                              '${user.email}' +
-                              "\n\n" +
-                              "Descripción: El usuario aun no ha sido aceptado\n\n"),
-                          trailing: Wrap(spacing: 0, children: <Widget>[
-                            IconButton(
-                              key: Key("accept-icon-${user.pk}"),
-                              icon: Icon(Icons.check_circle),
-                              color: Colors.green,
-                              tooltip: "Aceptar",
-                              onPressed: () async =>
-                                  {_action(user, 'Aceptar', _context)},
-                            ),
-                            IconButton(
-                              key: Key("reject-icon-${user.pk}"),
-                              icon: Icon(Icons.cancel),
-                              color: Colors.red,
-                              tooltip: "Rechazar",
-                              onPressed: () async =>
-                                  {_action(user, 'Rechazar', _context)},
-                            ),
-                            IconButton(
-                              key: Key("block-icon-${user.pk}"),
+                          IconButton(
+                            icon: icon2,
+                            color: Colors.red,
+                            tooltip: textIcon2,
+                            onPressed: () async => {_action(user, textIcon2)},
+                          ),
+                          Visibility(
+                            visible: iconVisible,
+                            child: IconButton(
                               icon: Icon(Icons.block,
                                   color: Colors.red, semanticLabel: "Bloquear"),
                               tooltip: "Bloquear",
@@ -122,31 +172,57 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
                                 _action(user, 'Bloquear', _context),
                               },
                             ),
-                          ]),
-                        ),
-                      );
-                    },
-                  ));
-            } else if (snapshot.hasData && snapshot.data.isEmpty)
-              return RefreshIndicator(
-                  onRefresh: () async => {_loadUsers()},
-                  child:
-                      Center(child: Text("No hay ${appTitle.toLowerCase()}")));
-            else
-              return Center(child: CircularProgressIndicator());
-          },
-        ),
-        bottomSheet: TextFormField(
-          decoration: InputDecoration(
-            hintText: "Ingrese la busqueda..",
-            icon: IconButton(
-              icon: Icon(Icons.search),
-              onPressed: () async => {_loadUsers()},
-            ),
-            helperText: "Puede buscar por nombre de usuario o por correo",
+                          ),
+                        ]),
+                      ),
+                    );
+                  },
+                ));
+          } else if (snapshot.hasData && snapshot.data.isEmpty)
+            return RefreshIndicator(
+                onRefresh: () async => {_loadUsers()},
+                child: Center(child: Text("No hay ${appTitle.toLowerCase()}")));
+          else
+            return Center(child: CircularProgressIndicator());
+        },
+      ),
+      bottomSheet: TextFormField(
+        decoration: InputDecoration(
+          hintText: "Ingrese la busqueda..",
+          icon: IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () async => {_loadUsers()},
           ),
-          onChanged: (val) => textFilter = val.trim(),
-        ));
+          helperText: "Puede buscar por nombre de usuario o por correo",
+        ),
+        onChanged: (val) => textFilter = val.trim(),
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _selectedIndex,
+        backgroundColor: Colors.blue[500],
+        selectedItemColor: Colors.white70,
+        items: [
+          BottomNavigationBarItem(
+            title: Text(
+              "Solicitudes Pendientes",
+            ),
+            icon: Icon(
+              Icons.drafts,
+            ),
+          ),
+          BottomNavigationBarItem(
+            title: Text(
+              "Solicitudes Eliminadas",
+            ),
+            icon: Icon(
+              Icons.delete,
+            ),
+          ),
+        ],
+        onTap: _onItemTapped,
+        selectedFontSize: 18,
+      ),
+    );
   }
 
   Future<void> _action(User user, String action, _context) async {
@@ -155,10 +231,19 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
     if (action != 'Aceptar') {
       if (action == 'Bloquear') {
         message = 'Bloqueada';
-      } else {
-        message = "Eliminada";
+      } else if (action == 'Rechazar') {
+        message = "Rechazada";
       }
       type = 'DELETED';
+
+      if (action == 'Restaurar') {
+        message = 'restaurada y estará lista para ser aceptada';
+        type = 'DEMO_USER';
+      } else if (action == 'Eliminar') {
+        message = 'eliminada de forma permamente';
+        type = "eliminar";
+      }
+
       return showDialog<void>(
         context: context,
         barrierDismissible: true,
@@ -169,7 +254,9 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
               child: ListBody(
                 children: <Widget>[
                   Text('La solicitud de ' +
+                      '"' +
                       user.username +
+                      '"' +
                       " va a ser " +
                       message),
                 ],
@@ -185,7 +272,7 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
               FlatButton(
                 child: Text('Sí'),
                 textColor: Colors.red,
-                onPressed: () async => helper(user, type, _context),
+                onPressed: () async => helper(user, type, context),
               ),
             ],
           );
@@ -193,15 +280,21 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
       );
     } else {
       type = "ACTIVE";
-      helper(user, type, _context);
+      helper(user, type, context);
     }
   }
 
-  helper(User user, type, _context) async {
-    Api.updateTypeUser(user.pk.toString(), type)
-        .then((value) => this.showToast(value))
-        .catchError((error) => Scaffold.of(_context).showSnackBar(
-            SnackBar(content: Text('Error al configurar usuario'))));
+  helper(User user, type, context) async {
+    if (type == 'eliminar') {
+      Api.deletedUser(user.pk.toString())
+          .then((value) => this.showToast(value));
+    } else {
+      Api.updateTypeUser(user.pk.toString(), type)
+          .then((value) => this.showToast(value));
+    }
+    if (type != 'ACTIVE') {
+      Navigator.of(context).pop();
+    }
     _loadUsers();
   }
 }

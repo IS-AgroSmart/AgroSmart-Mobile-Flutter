@@ -66,8 +66,10 @@ class _AppState extends State<MyNewApp> {
         Profile.routeName: (context) => Profile(),
         ChangePassword.routeName: (context) => ChangePassword(),
         UserRequestsWidget.routeName: (context) => UserRequestsWidget(),
-        RequestPasswordResetWidget.routeName: (context) => RequestPasswordResetWidget(),
-        PasswordResetRequestedWidget.routeName: (context) => PasswordResetRequestedWidget(),
+        RequestPasswordResetWidget.routeName: (context) =>
+            RequestPasswordResetWidget(),
+        PasswordResetRequestedWidget.routeName: (context) =>
+            PasswordResetRequestedWidget(),
       },
 //      theme: ThemeData(primarySwatch: Colors.green),
     );
