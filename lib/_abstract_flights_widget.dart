@@ -116,6 +116,7 @@ abstract class AbstractFlightsState extends State<AbstractFlightsWidget> {
                                                   'Error al restaurar el vuelo'))))),
                             if (deleteMessage.isNotEmpty)
                               IconButton(
+                                key: Key("delete-icon-${flight.uuid}"),
                                 icon: Icon(Icons.delete),
                                 onPressed: () => showDialog(
                                   context: context,

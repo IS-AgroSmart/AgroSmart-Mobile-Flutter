@@ -9,6 +9,7 @@ import 'package:flutter_app/results.dart';
 import 'api.dart';
 
 class FlightDetailWidget extends StatefulWidget {
+  static const routeName = "/flights/detail";
   final Flight flight;
 
   FlightDetailWidget({Key key, @required this.flight}) : super(key: key);
