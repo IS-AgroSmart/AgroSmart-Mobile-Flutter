@@ -17,6 +17,7 @@ class _CompletedUsersState extends AbstractUsersState {
   @override
   void initState() {
     usersFutureCallable = Api.fetchUsersRequest;
+    usersFutureActive = Api.fetchUsersActive;
     usersFutureCallableRequestsDeleted = Api.fetchUsersRequestDeleted;
     super.initState();
   }

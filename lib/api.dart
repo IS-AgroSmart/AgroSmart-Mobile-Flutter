@@ -157,6 +157,22 @@ class Api {
     }
   }
 
+  static Future<List<User>> fetchUsersActive() async {
+    final response = await client.get(ENTRYPOINT + '/users',
+        headers: {"Authorization": "Token " + (await getToken())});
+    var users;
+    if (response.statusCode == 200) {
+      users = User.parse(response.body)
+          .where((u) =>
+              u.type == "ACTIVE" ||
+              u.type == "ADMIN" && Helpers.loggedInUser.pk != u.pk)
+          .toList();
+      return users;
+    } else {
+      throw Exception(response.body);
+    }
+  }
+
   static Future<List<User>> fetchUsersRequestDeleted() async {
     final response = await client.get(ENTRYPOINT + '/users',
         headers: {"Authorization": "Token " + (await getToken())});

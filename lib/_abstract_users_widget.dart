@@ -15,6 +15,7 @@ abstract class AbstractUersWidget extends StatefulWidget {
 
 abstract class AbstractUsersState extends State<AbstractUersWidget> {
   Future<List<User>> Function() usersFutureCallable;
+  Future<List<User>> Function() usersFutureActive;
   Future<List<User>> Function() usersFutureCallableRequestsDeleted;
 
   static int index = 0;
@@ -58,6 +59,16 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
       textIcon2 = 'Rechazar';
 
       description = "Descripción: El usuario aun no ha sido aceptado\n\n";
+    } else if (_selectedIndex == 1) {
+      //for request deleted
+      iconVisible = false;
+      users = await usersFutureActive();
+      iconColorUser = Colors.blue;
+
+      icon2 = Icon(Icons.delete_forever);
+      textIcon2 = 'Eliminar';
+
+      description = 'Descripción: Usuario Activo\n\n';
     } else {
       //for request deleted
       iconVisible = false;
@@ -148,8 +159,12 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
                       child: ListTile(
                         leading: iconUser,
                         title: Text('${user.username}'),
-                        subtitle: Text(
-                            "Email: " + '${user.email}' + "\n\n" + description),
+                        subtitle: Text("Email: " +
+                            '${user.email}' +
+                            "\nTipo: " +
+                            '${user.type}' +
+                            "\n" +
+                            description),
                         trailing: Wrap(spacing: 0, children: <Widget>[
                           IconButton(
                             key: Key("icon1-user-${user.pk}"),
@@ -209,7 +224,7 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
         items: [
           BottomNavigationBarItem(
             title: Text(
-              "Solicitudes Pendientes",
+              "Solicitudes",
             ),
             icon: Icon(
               Icons.drafts,
@@ -217,7 +232,15 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
           ),
           BottomNavigationBarItem(
             title: Text(
-              "Solicitudes Eliminadas",
+              "Activos",
+            ),
+            icon: Icon(
+              Icons.account_box,
+            ),
+          ),
+          BottomNavigationBarItem(
+            title: Text(
+              "Eliminados",
             ),
             icon: Icon(
               Icons.delete,
