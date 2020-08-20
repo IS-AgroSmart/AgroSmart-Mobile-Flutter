@@ -189,7 +189,7 @@ class Api {
   static Future<String> deletedUser(String idUser) async {
     final response = await client.delete(ENTRYPOINT + '/users/' + idUser + '/',
         headers: {"Authorization": "Token " + (await getToken())});
-    if (response.statusCode != 200) {
+    if (response.statusCode != 204) {
       return "La solicitud ha fallado, por favor intente mas tarde";
     }
     return "La solicitud se ha completado con exito\n si los cambios no se muestran por favor recarge la pagina..";

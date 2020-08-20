@@ -136,19 +136,6 @@ void main() {
     expect(find.text("admin"), findsNothing);
   });
 
-  /*testWidgets("UserRequestsWidget shows status icons",
-      (WidgetTester tester) async {
-    await pumpArgumentWidget(tester,
-        args: null, child: CompletedFlightsWidget());
-
-    var ws = tester.allWidgets;
-    var findIcon = (IconData i) =>
-        ws.where((w) => w is Icon).where((w) => (w as Icon).icon == i);
-    expect(findIcon(Icons.check), hasLength(1));
-    expect(findIcon(Icons.error), hasLength(1));
-    expect(findIcon(Icons.cancel), hasLength(1));
-  });*/
-
   testWidgets("UserRequestsWidget shows Reject icon",
       (WidgetTester tester) async {
     await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());

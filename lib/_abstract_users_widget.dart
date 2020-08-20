@@ -34,7 +34,7 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
   Icon iconUser;
   String textIcon1;
   String textIcon2;
-  bool iconVisible = true;
+  bool blockIconVisible = true, icon1Visible = true;
   bool selected1 = false;
   String description = '';
 
@@ -50,9 +50,11 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
     if (_selectedIndex == 0) {
       //for request pending
       users = await usersFutureCallable();
-      icon1 = Icon(Icons.check_circle);
       iconColorUser = Colors.black;
-      iconVisible = true;
+      blockIconVisible = true;
+
+      icon1Visible = true;
+      icon1 = Icon(Icons.check_circle);
       textIcon1 = 'Aceptar';
 
       icon2 = Icon(Icons.cancel);
@@ -61,9 +63,12 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
       description = "Descripción: El usuario aun no ha sido aceptado\n\n";
     } else if (_selectedIndex == 1) {
       //for request deleted
-      iconVisible = false;
       users = await usersFutureActive();
+      blockIconVisible = false;
       iconColorUser = Colors.blue;
+
+      icon1Visible = false;
+      icon1 = Icon(Icons.check); // Won't be seen
 
       icon2 = Icon(Icons.delete_forever);
       textIcon2 = 'Eliminar';
@@ -71,17 +76,19 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
       description = 'Descripción: Usuario Activo\n\n';
     } else {
       //for request deleted
-      iconVisible = false;
       users = await usersFutureCallableRequestsDeleted();
-      icon1 = Icon(Icons.restore);
+      blockIconVisible = false;
       iconColorUser = Colors.red;
+
+      icon1Visible = true;
+      icon1 = Icon(Icons.restore);
       textIcon1 = 'Restaurar';
 
       icon2 = Icon(Icons.delete_forever);
       textIcon2 = 'Eliminar';
 
       description =
-          'Descripción:La solicitud del usuario esta eliminada eliga que acción tomar\n\n';
+          'Descripción: La solicitud del usuario esta eliminada eliga que acción tomar\n\n';
     }
     iconUser = Icon(
       Icons.account_circle,
@@ -110,14 +117,7 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
   }
 
   void _onItemTapped(int index) {
-    if (index == 0) {
-      selected1 = false;
-    } else {
-      selected1 = true;
-    }
-    setState(() {
-      _selectedIndex = index;
-    });
+    setState(() => _selectedIndex = index);
     textFilter = '';
     _usersStream.add(null); //para hacer que la pagina se recarge
     _loadUsers();
@@ -166,14 +166,16 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
                             "\n" +
                             description),
                         trailing: Wrap(spacing: 0, children: <Widget>[
-                          IconButton(
-                            key: Key("icon1-user-${user.pk}"),
-                            icon: icon1,
-                            color: Colors.green,
-                            tooltip: textIcon1,
-                            onPressed: () async =>
-                                {_action(user, textIcon1, _context)},
-                          ),
+                          Visibility(
+                              visible: icon1Visible,
+                              child: IconButton(
+                                key: Key("icon1-user-${user.pk}"),
+                                icon: icon1,
+                                color: Colors.green,
+                                tooltip: textIcon1,
+                                onPressed: () async =>
+                                    {_action(user, textIcon1, _context)},
+                              )),
                           IconButton(
                             key: Key("icon2-user-${user.pk}"),
                             icon: icon2,
@@ -183,7 +185,7 @@ abstract class AbstractUsersState extends State<AbstractUersWidget> {
                                 {_action(user, textIcon2, _context)},
                           ),
                           Visibility(
-                            visible: iconVisible,
+                            visible: blockIconVisible,
                             child: IconButton(
                               icon: Icon(Icons.block,
                                   color: Colors.red, semanticLabel: "Bloquear"),
