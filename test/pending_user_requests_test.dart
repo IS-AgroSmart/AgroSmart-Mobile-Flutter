@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app/UserRequests.dart';
+import 'package:flutter_app/user_requests.dart';
 import 'package:flutter_app/api.dart';
 import 'package:flutter_app/helpers.dart';
 import 'package:flutter_app/models/user.dart';

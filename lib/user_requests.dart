@@ -1,8 +1,8 @@
-import '_abstract_users_widget.dart';
+import '_abstract_users_request_widget.dart';
 import 'api.dart';
 
 class UserRequestsWidget extends AbstractUersWidget {
-  static final String routeName = "/user/";
+  static final String routeName = "/user_request/";
 
   @override
   String routeNameFunc() => UserRequestsWidget.routeName;
@@ -17,7 +17,6 @@ class _CompletedUsersState extends AbstractUsersState {
   @override
   void initState() {
     usersFutureCallable = Api.fetchUsersRequest;
-    usersFutureActive = Api.fetchUsersActive;
     usersFutureCallableRequestsDeleted = Api.fetchUsersRequestDeleted;
     super.initState();
   }

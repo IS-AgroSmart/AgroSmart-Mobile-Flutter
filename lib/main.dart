@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/admin_options.dart';
 import 'package:flutter_app/completed_flights_widget.dart';
 import 'package:flutter_app/create_account_successful_widget.dart';
 import 'package:flutter_app/create_account_widget.dart';
@@ -16,7 +17,8 @@ import 'package:flutter_app/request_password_reset_widget.dart';
 import 'package:flutter_app/password_reset_requested_widget.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:intl/date_symbol_data_local.dart';
-import 'package:flutter_app/UserRequests.dart';
+import 'package:flutter_app/user_requests.dart';
+import 'package:flutter_app/users_widget.dart';
 import 'api.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -70,6 +72,8 @@ class _AppState extends State<MyNewApp> {
             RequestPasswordResetWidget(),
         PasswordResetRequestedWidget.routeName: (context) =>
             PasswordResetRequestedWidget(),
+        AdminOptionsWidget.routeName: (context) => AdminOptionsWidget(),
+        UsersWidget.routeName: (context) => UsersWidget(),
       },
 //      theme: ThemeData(primarySwatch: Colors.green),
     );

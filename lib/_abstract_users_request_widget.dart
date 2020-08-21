@@ -7,14 +7,14 @@ import 'api.dart';
 import 'drawer.dart';
 import 'models/user.dart';
 
-abstract class AbstractUsers extends StatefulWidget {
+abstract class AbstractUersWidget extends StatefulWidget {
   static const routeName = "declare on child classes";
 
   String routeNameFunc();
 }
 
-abstract class AbstractsUsersState extends State<AbstractUsers> {
-  Future<List<User>> Function() usersFutureActive;
+abstract class AbstractUsersState extends State<AbstractUersWidget> {
+  Future<List<User>> Function() usersFutureCallable;
   Future<List<User>> Function() usersFutureCallableRequestsDeleted;
 
   static int index = 0;
@@ -33,13 +33,13 @@ abstract class AbstractsUsersState extends State<AbstractUsers> {
   Icon iconUser;
   String textIcon1;
   String textIcon2;
-  bool blockIconVisible = true,
-      icon1Visible = true;
+  bool blockIconVisible = true, icon1Visible = true;
   bool selected1 = false;
   String description = '';
 
   @override
   void initState() {
+    usersFuture = usersFutureCallable();
     _usersStream = StreamController<List<User>>();
     _loadUsers();
     super.initState();
@@ -47,19 +47,21 @@ abstract class AbstractsUsersState extends State<AbstractUsers> {
 
   void _loadUsers() async {
     if (_selectedIndex == 0) {
-      //for request deleted
-      users = await usersFutureActive();
-      blockIconVisible = false;
-      iconColorUser = Colors.blue;
+      //for request pending
+      users = await usersFutureCallable();
+      iconColorUser = Colors.black;
+      blockIconVisible = true;
 
-      icon1Visible = false;
-      icon1 = Icon(Icons.check); // Won't be seen
+      icon1Visible = true;
+      icon1 = Icon(Icons.check_circle);
+      textIcon1 = 'Aceptar';
 
-      icon2 = Icon(Icons.delete_forever);
-      textIcon2 = 'Eliminar';
+      icon2 = Icon(Icons.cancel);
+      textIcon2 = 'Rechazar';
 
-      description = 'Descripción: Usuario Activo\n\n';
-    } else {
+      description = "Descripción: El usuario aun no ha sido aceptado\n\n";
+    }
+    else {
       //for request deleted
       users = await usersFutureCallableRequestsDeleted();
       blockIconVisible = false;
@@ -70,10 +72,10 @@ abstract class AbstractsUsersState extends State<AbstractUsers> {
       textIcon1 = 'Restaurar';
 
       icon2 = Icon(Icons.delete_forever);
-      textIcon2 = 'EliminarPermanente';
+      textIcon2 = 'Eliminar';
 
       description =
-      'Descripción: La solicitud del usuario esta eliminada eliga que acción tomar\n\n';
+          'Descripción: La solicitud del usuario esta eliminada eliga que acción tomar\n\n';
     }
     iconUser = Icon(
       Icons.account_circle,
@@ -83,8 +85,8 @@ abstract class AbstractsUsersState extends State<AbstractUsers> {
     if (textFilter.isNotEmpty) {
       _usersStream.add(users
           .where((u) =>
-      u.username.toLowerCase().indexOf(textFilter) > -1 ||
-          u.email.toLowerCase().indexOf(textFilter) > -1)
+              u.username.toLowerCase().indexOf(textFilter) > -1 ||
+              u.email.toLowerCase().indexOf(textFilter) > -1)
           .toList());
     } else {
       _usersStream.add(users);
@@ -159,7 +161,7 @@ abstract class AbstractsUsersState extends State<AbstractUsers> {
                                 color: Colors.green,
                                 tooltip: textIcon1,
                                 onPressed: () async =>
-                                {_action(user, textIcon1, _context)},
+                                    {_action(user, textIcon1, _context)},
                               )),
                           IconButton(
                             key: Key("icon2-user-${user.pk}"),
@@ -167,7 +169,18 @@ abstract class AbstractsUsersState extends State<AbstractUsers> {
                             color: Colors.red,
                             tooltip: textIcon2,
                             onPressed: () async =>
-                            {_action(user, textIcon2, _context)},
+                                {_action(user, textIcon2, _context)},
+                          ),
+                          Visibility(
+                            visible: blockIconVisible,
+                            child: IconButton(
+                              icon: Icon(Icons.block,
+                                  color: Colors.red, semanticLabel: "Bloquear"),
+                              tooltip: "Bloquear",
+                              onPressed: () async => {
+                                _action(user, 'Bloquear', _context),
+                              },
+                            ),
                           ),
                         ]),
                       ),
@@ -200,15 +213,15 @@ abstract class AbstractsUsersState extends State<AbstractUsers> {
         items: [
           BottomNavigationBarItem(
             title: Text(
-              "Activos",
+              "Pendientes",
             ),
             icon: Icon(
-              Icons.account_box,
+              Icons.drafts,
             ),
           ),
           BottomNavigationBarItem(
             title: Text(
-              "Eliminados",
+              "Eliminadas",
             ),
             icon: Icon(
               Icons.delete,
@@ -224,72 +237,75 @@ abstract class AbstractsUsersState extends State<AbstractUsers> {
   Future<void> _action(User user, String action, _context) async {
     var message = '';
     var type = '';
+    if (action != 'Aceptar') {
+      if (action == 'Bloquear') {
+        message = 'Bloqueada';
+      } else if (action == 'Rechazar') {
+        message = "Rechazada";
+      }
+      type = 'DELETED';
 
+      if (action == 'Restaurar') {
+        message = 'restaurada y estará lista para ser aceptada';
+        type = 'DEMO_USER';
+      } else if (action == 'Eliminar') {
+        message = 'eliminada de forma permamente';
+        type = "eliminar";
+      }
 
-    if (action == 'Restaurar') {
-      message = 'restaurado y tendrá acceso completo al sistema';
-      type = 'ACTIVE';
-    }
-    else if(action=="Eliminar"){
-      message = "eliminado del sistema, pero puede ser restaurado";
-      type="DELETED";
-    }
-    else if (action == 'EliminarPermanente') {
-      message = 'eliminado de forma permamente';
-      type = "eliminar";
-    }
-
-    return showDialog<void>(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('¿Realmente quiere ' + action + " el usuario?"),
-          content: SingleChildScrollView(
-            child: ListBody(
-              children: <Widget>[
-                Text('El usuario ' +
-                    '"' +
-                    user.username +
-                    '"' +
-                    " será " +
-                    message),
-              ],
+      return showDialog<void>(
+        context: context,
+        barrierDismissible: true,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('¿Realmente quiere ' + action + " la solicitud?"),
+            content: SingleChildScrollView(
+              child: ListBody(
+                children: <Widget>[
+                  Text('La solicitud de ' +
+                      '"' +
+                      user.username +
+                      '"' +
+                      " va a ser " +
+                      message),
+                ],
+              ),
             ),
-          ),
-          actions: <Widget>[
-            FlatButton(
-              child: Text('No'),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            FlatButton(
-              child: Text('Sí'),
-              textColor: Colors.red,
-              onPressed: () async => helper(user, type, _context),
-            ),
-          ],
-        );
-      },
-    );
+            actions: <Widget>[
+              FlatButton(
+                child: Text('No'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+              FlatButton(
+                child: Text('Sí'),
+                textColor: Colors.red,
+                onPressed: () async => helper(user, type, _context),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      type = "ACTIVE";
+      helper(user, type, _context);
+    }
   }
 
   helper(User user, type, _context) async {
     if (type == 'eliminar') {
       Api.deletedUser(user.pk.toString())
           .then((value) => this.showToast(value))
-          .catchError((error) =>
-          Scaffold.of(_context).showSnackBar(
+          .catchError((error) => Scaffold.of(_context).showSnackBar(
               SnackBar(content: Text('Error al eliminar usuario'))));
     } else {
       Api.updateTypeUser(user.pk.toString(), type)
           .then((value) => this.showToast(value))
-          .catchError((error) =>
-          Scaffold.of(_context).showSnackBar(
+          .catchError((error) => Scaffold.of(_context).showSnackBar(
               SnackBar(content: Text('Error al configurar usuario'))));
     }
-    if (type != 'ACTIVE' || type != 'DELETED') {
+    if (type != 'ACTIVE') {
       Navigator.of(context).pop();
     }
     _loadUsers();

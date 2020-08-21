@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_app/admin_options.dart';
 import 'package:flutter_app/completed_flights_widget.dart';
 import 'package:flutter_app/helpers.dart';
 import 'package:flutter_app/login_widget.dart';
@@ -11,7 +12,7 @@ import 'package:prefs_config/prefs_config.dart';
 import 'api.dart';
 import 'deleted_flights_widget.dart';
 import 'helpers.dart';
-import 'package:flutter_app/UserRequests.dart';
+import 'package:flutter_app/user_requests.dart';
 
 class AppDrawer extends Drawer {
   @override
@@ -75,8 +76,8 @@ class AppDrawer extends Drawer {
               enabled: Helpers.loggedInUser.isStaff ||
                   Helpers.loggedInUser.type == 'ADMIN',
               leading: Icon(Icons.build),
-              onTap: () => Navigator.pushNamedAndRemoveUntil(
-                  context, UserRequestsWidget.routeName, (route) => false),
+              onTap: () => Navigator.pushReplacementNamed(
+                  context, AdminOptionsWidget.routeName),
             ),
           ),
           ListTile(

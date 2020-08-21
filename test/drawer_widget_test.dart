@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app/UserRequests.dart';
+import 'package:flutter_app/user_requests.dart';
 import 'package:flutter_app/api.dart';
 import 'package:flutter_app/completed_flights_widget.dart';
 import 'package:flutter_app/deleted_flights_widget.dart';
