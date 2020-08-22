@@ -1,11 +1,11 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/user_requests.dart';
 import 'package:flutter_app/api.dart';
 import 'package:flutter_app/helpers.dart';
 import 'package:flutter_app/models/user.dart';
 import 'package:flutter_app/new_flight.dart';
-import 'package:flutter_app/users_widget.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -113,15 +113,15 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets("UsersWidget shows deleted users if Deleted tapped",
+  testWidgets("UserRequestsWidget shows deleted users if Deleted tapped",
       (WidgetTester tester) async {
-    await pumpArgumentWidget(tester, args: null, child: UsersWidget());
+    await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());
     reset(client);
     when(client.get("http://droneapp.ngrok.io/api/users",
             headers: anyNamed("headers")))
         .thenAnswer((_) async => http.Response(jsonEncode(response), 200));
 
-    await tester.tap(find.text("Eliminados"));
+    await tester.tap(find.text("Eliminadas"));
     await tester.pumpAndSettle();
 
     var verifier =
@@ -131,10 +131,10 @@ void main() {
         verifier.captured[1], containsPair("Authorization", "Token faketoken"));
   });
 
-  testWidgets("UsersWidget filters for deleted users",
+  testWidgets("UserRequestsWidget filters for deleted users",
       (WidgetTester tester) async {
-    await pumpArgumentWidget(tester, args: null, child: UsersWidget());
-    await tester.tap(find.text("Eliminados"));
+    await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());
+    await tester.tap(find.text("Eliminadas"));
     await tester.pumpAndSettle();
 
     expect(find.text("normal1"), findsOneWidget);
@@ -142,39 +142,39 @@ void main() {
     expect(find.text("request1"), findsNothing);
   });
 
-  testWidgets("UsersWidget shows Delete icon",
+  testWidgets("UserRequestsWidget shows Delete icon",
       (WidgetTester tester) async {
-    await pumpArgumentWidget(tester, args: null, child: UsersWidget());
-    await tester.tap(find.text("Eliminados"));
+    await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());
+    await tester.tap(find.text("Eliminadas"));
     await tester.pumpAndSettle();
 
     var deleteButton = find.byKey(Key("icon2-user-2"));
     expect(deleteButton, findsOneWidget);
   });
 
-  testWidgets("UsersWidget shows alert when deleting",
+  testWidgets("UserRequestsWidget shows alert when deleting",
       (WidgetTester tester) async {
-    await pumpArgumentWidget(tester, args: null, child: UsersWidget());
-    await tester.tap(find.text("Eliminados"));
+    await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());
+    await tester.tap(find.text("Eliminadas"));
     await tester.pumpAndSettle();
 
     var rejectButton = find.byKey(Key("icon2-user-2"));
-    expect(find.text("¿Realmente quiere EliminarPermanente el usuario?"), findsNothing);
+    expect(find.text("¿Realmente quiere Eliminar la solicitud?"), findsNothing);
     await tester.tap(rejectButton);
     await tester.pumpAndSettle();
     expect(
-        find.text("¿Realmente quiere EliminarPermanente el usuario?"), findsOneWidget);
+        find.text("¿Realmente quiere Eliminar la solicitud?"), findsOneWidget);
 
     await tester.tap(find.text("No"));
     await tester.pumpAndSettle();
-    expect(find.text("¿Realmente quiere EliminarPermanente el usuario?"), findsNothing);
+    expect(find.text("¿Realmente quiere Eliminar la solicitud?"), findsNothing);
   });
 
-  testWidgets("UsersWidget deletes user", (WidgetTester tester) async {
+  testWidgets("UserRequestsWidget deletes user", (WidgetTester tester) async {
     when(client.delete(any, headers: anyNamed("headers")))
         .thenAnswer((_) async => http.Response("", 204));
-    await pumpArgumentWidget(tester, args: null, child: UsersWidget());
-    await tester.tap(find.text("Eliminados"));
+    await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());
+    await tester.tap(find.text("Eliminadas"));
     await tester.pumpAndSettle();
 
     var rejectButton = find.byKey(Key("icon2-user-2"));
@@ -190,11 +190,11 @@ void main() {
         verifier.captured[1], containsPair("Authorization", "Token faketoken"));
   });
 
-  testWidgets("UsersWidget searches for user", (WidgetTester tester) async {
+  testWidgets("UserRequestsWidget searches for user", (WidgetTester tester) async {
     when(client.delete(any, headers: anyNamed("headers")))
         .thenAnswer((_) async => http.Response("", 204));
-    await pumpArgumentWidget(tester, args: null, child: UsersWidget());
-    await tester.tap(find.text("Eliminados"));
+    await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());
+    await tester.tap(find.text("Eliminadas"));
     await tester.pumpAndSettle();
 
     var searchField = find.byType(TextFormField);
@@ -208,13 +208,13 @@ void main() {
     expect(find.text("anotheradmin"), findsOneWidget);
   });
 
-  testWidgets("UsersWidget shows message when empty array", (WidgetTester tester) async {
+  testWidgets("UserRequestsWidget shows message when empty array", (WidgetTester tester) async {
     reset(client);
     when(client.get("http://droneapp.ngrok.io/api/users",
         headers: anyNamed("headers")))
         .thenAnswer((_) async => http.Response(jsonEncode([]), 200));
-    await pumpArgumentWidget(tester, args: null, child: UsersWidget());
+    await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());
 
-    expect(find.text("No hay usuarios"), findsOneWidget);
+    expect(find.text("No hay solicitudes de usuarios"), findsOneWidget);
   });
 }

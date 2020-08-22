@@ -111,10 +111,6 @@ void main() {
     expect(find.text("Solicitudes de Usuarios"), findsOneWidget);
   });
 
-  test("UserRequestsWidget has the correct route name", () {
-    expect(UserRequestsWidget.routeName, "/user/");
-  });
-
   testWidgets("UserRequestsWidget calls the API and passes token",
       (WidgetTester tester) async {
     await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());
@@ -243,6 +239,6 @@ void main() {
 
   testWidgets("routeNameFunc() returns correct route",
       (WidgetTester tester) async {
-    expect(UserRequestsWidget().routeNameFunc(), "/user/");
+    expect(UserRequestsWidget().routeNameFunc(), "/user_request/");
   });
 }

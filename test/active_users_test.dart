@@ -2,11 +2,11 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_app/user_requests.dart';
 import 'package:flutter_app/api.dart';
 import 'package:flutter_app/helpers.dart';
 import 'package:flutter_app/models/user.dart';
 import 'package:flutter_app/new_flight.dart';
+import 'package:flutter_app/users_widget.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -114,20 +114,20 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  testWidgets("UserRequestsWidget has buttons for users types",
+  testWidgets("UsersWidget has buttons for users types",
       (WidgetTester tester) async {
-    await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());
+    await pumpArgumentWidget(tester, args: null, child: UsersWidget());
 
-    expect(find.widgetWithText(BottomNavigationBar, "Solicitudes"),
-        findsOneWidget);
+    expect(
+        find.widgetWithText(BottomNavigationBar, "Solicitudes"), findsNothing);
     expect(find.widgetWithText(BottomNavigationBar, "Activos"), findsOneWidget);
     expect(
         find.widgetWithText(BottomNavigationBar, "Eliminados"), findsOneWidget);
   });
 
-  testWidgets("UserRequestsWidget shows active users if Active tapped",
+  testWidgets("UsersWidget shows active users if Active tapped",
       (WidgetTester tester) async {
-    await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());
+    await pumpArgumentWidget(tester, args: null, child: UsersWidget());
     reset(client);
     when(client.get("http://droneapp.ngrok.io/api/users",
             headers: anyNamed("headers")))
@@ -143,9 +143,9 @@ void main() {
         verifier.captured[1], containsPair("Authorization", "Token faketoken"));
   });
 
-  testWidgets("UserRequestsWidget filters for active users",
+  testWidgets("UsersWidget filters for active users",
       (WidgetTester tester) async {
-    await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());
+    await pumpArgumentWidget(tester, args: null, child: UsersWidget());
     await tester.tap(find.text("Activos"));
     await tester.pumpAndSettle();
 
@@ -155,9 +155,8 @@ void main() {
     expect(find.text("admin"), findsNothing); // Don't show myself
   });
 
-  testWidgets("UserRequestsWidget shows Delete icon",
-      (WidgetTester tester) async {
-    await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());
+  testWidgets("UsersWidget shows Delete icon", (WidgetTester tester) async {
+    await pumpArgumentWidget(tester, args: null, child: UsersWidget());
     await tester.tap(find.text("Activos"));
     await tester.pumpAndSettle();
 
@@ -165,28 +164,28 @@ void main() {
     expect(deleteButton, findsOneWidget);
   });
 
-  testWidgets("UserRequestsWidget shows alert when deleting",
+  testWidgets("UsersWidget shows alert when deleting",
       (WidgetTester tester) async {
-    await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());
+    await pumpArgumentWidget(tester, args: null, child: UsersWidget());
     await tester.tap(find.text("Activos"));
     await tester.pumpAndSettle();
 
     var rejectButton = find.byKey(Key("icon2-user-2"));
-    expect(find.text("¿Realmente quiere Eliminar la solicitud?"), findsNothing);
+    expect(find.text("¿Realmente quiere Eliminar el usuario?"), findsNothing);
     await tester.tap(rejectButton);
     await tester.pumpAndSettle();
-    expect(
-        find.text("¿Realmente quiere Eliminar la solicitud?"), findsOneWidget);
+    expect(find.text("¿Realmente quiere Eliminar el usuario?"), findsOneWidget);
 
     await tester.tap(find.text("No"));
     await tester.pumpAndSettle();
-    expect(find.text("¿Realmente quiere Eliminar la solicitud?"), findsNothing);
+    expect(find.text("¿Realmente quiere Eliminar el usuario?"), findsNothing);
   });
 
-  testWidgets("UserRequestsWidget deletes user", (WidgetTester tester) async {
-    when(client.delete(any, headers: anyNamed("headers")))
+  testWidgets("UsersWidget deletes user", (WidgetTester tester) async {
+    when(client.patch(any,
+            headers: anyNamed("headers"), body: anyNamed("body")))
         .thenAnswer((_) async => http.Response("", 204));
-    await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());
+    await pumpArgumentWidget(tester, args: null, child: UsersWidget());
     await tester.tap(find.text("Activos"));
     await tester.pumpAndSettle();
 
@@ -196,18 +195,20 @@ void main() {
     await tester.tap(find.text("Sí"));
     await tester.pumpAndSettle();
 
-    var verifier =
-        verify(client.delete(captureAny, headers: captureAnyNamed("headers")));
+    var verifier = verify(client.patch(captureAny,
+        headers: captureAnyNamed("headers"), body: captureAnyNamed("body")));
     expect(verifier.captured[0], "http://droneapp.ngrok.io/api/users/2/");
     expect(
         verifier.captured[1], containsPair("Authorization", "Token faketoken"));
+    expect(jsonDecode(verifier.captured[2]), containsPair("type", "DELETED"));
   });
 
-  testWidgets("UserRequestsWidget shows snackbar if delete fails",
+  testWidgets("UsersWidget shows snackbar if delete fails",
       (WidgetTester tester) async {
-    when(client.delete(any, headers: anyNamed("headers")))
-        .thenThrow(SocketException("dummy"));
-    await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());
+        when(client.patch(any,
+            headers: anyNamed("headers"), body: anyNamed("body")))
+            .thenThrow(SocketException("dummy"));
+    await pumpArgumentWidget(tester, args: null, child: UsersWidget());
     await tester.tap(find.text("Activos"));
     await tester.pumpAndSettle();
 
@@ -219,12 +220,12 @@ void main() {
     await tester.tap(find.text("Sí"));
     await tester.pumpAndSettle();
     expect(find.byType(SnackBar), findsOneWidget);
-    expect(find.text("Error al eliminar usuario"), findsOneWidget);
+    expect(find.text("Error al configurar usuario"), findsOneWidget);
   });
 
-  testWidgets("UserRequestsWidget doesn't show Accept icon",
+  testWidgets("UsersWidget doesn't show Accept icon",
       (WidgetTester tester) async {
-    await pumpArgumentWidget(tester, args: null, child: UserRequestsWidget());
+    await pumpArgumentWidget(tester, args: null, child: UsersWidget());
     await tester.tap(find.text("Activos"));
     await tester.pumpAndSettle();
 

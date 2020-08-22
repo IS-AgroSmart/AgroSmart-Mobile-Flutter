@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_app/admin_options.dart';
 import 'package:flutter_app/user_requests.dart';
 import 'package:flutter_app/api.dart';
 import 'package:flutter_app/completed_flights_widget.dart';
@@ -46,6 +47,7 @@ void main() {
       LoginWidget.routeName: (context) => LoginWidget(),
       Profile.routeName: (context) => Profile(),
       UserRequestsWidget.routeName: (context) => UserRequestsWidget(),
+      AdminOptionsWidget.routeName: (context) => AdminOptionsWidget(),
     });
 
     client = MockClient();
@@ -206,7 +208,7 @@ void main() {
     expect(find.byType(Profile), findsOneWidget);
   });
 
-  /*testWidgets("Drawer navigates to admin options", (WidgetTester tester) async {
+  testWidgets("Drawer navigates to admin options", (WidgetTester tester) async {
     Helpers.loggedInUser = User(
         pk: 2,
         username: "admin",
@@ -221,16 +223,15 @@ void main() {
     var client = MockClient();
     Api.client = client;
     when(client.get(any, headers: anyNamed("headers")))
-        .thenAnswer((_) async =>
-        http.Response(jsonEncode([]), 200));
+        .thenAnswer((_) async => http.Response(jsonEncode([]), 200));
 
     expect(find.byType(UserRequestsWidget), findsNothing);
     await tester.drag(find.text("Vuelos completos"), Offset(0.0, -200));
     await tester.pump();
     await tester.tap(find.text("Opciones Admin"));
     await tester.pumpAndSettle();
-    verify(mockObserver.didPush(any, any));
-    verify(mockObserver.didRemove(any, any));
-    expect(find.byType(UserRequestsWidget), findsOneWidget);
-  });*/
+    verify(mockObserver.didReplace(
+        newRoute: anyNamed("newRoute"), oldRoute: anyNamed("oldRoute")));
+    expect(find.byType(AdminOptionsWidget), findsOneWidget);
+  });
 }
