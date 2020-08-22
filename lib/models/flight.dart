@@ -27,7 +27,6 @@ class Flight {
       this.deleted});
 
   factory Flight.fromMap(Map<String, dynamic> json) {
-    print(json);
     return Flight(
       uuid: json["uuid"],
       name: json['name'],
