@@ -12,7 +12,6 @@ import 'package:prefs_config/prefs_config.dart';
 import 'api.dart';
 import 'deleted_flights_widget.dart';
 import 'helpers.dart';
-import 'package:flutter_app/user_requests.dart';
 
 class AppDrawer extends Drawer {
   @override

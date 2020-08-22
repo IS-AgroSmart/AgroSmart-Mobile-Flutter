@@ -223,7 +223,7 @@ class Api {
   }
 
   static Future<int> cancelProcessingFlight(Flight flight) async {
-    var details = await http
+    var details = await client
         .post(ENTRYPOINTNODE + "/task/cancel", body: {"uuid": flight.uuid});
     return details.statusCode;
   }
