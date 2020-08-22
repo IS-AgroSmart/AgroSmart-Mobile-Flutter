@@ -1,9 +1,7 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_app/api.dart';
-import 'package:flutter_app/completed_flights_widget.dart';
 import 'package:flutter_app/flight_detail_widget.dart';
 import 'package:flutter_app/helpers.dart';
 import 'package:flutter_app/models/user.dart';

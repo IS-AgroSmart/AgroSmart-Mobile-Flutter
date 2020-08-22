@@ -21,7 +21,7 @@ void main() {
   SharedPreferences.setMockInitialValues(
       {"token": "faketoken", "username": "foo"});
 
-  var completeResponse, inProgressResponse, canceledResponse;
+  var completeResponse, inProgressResponse;
   var client, mockObserver;
 
   setUp(() {
@@ -51,19 +51,19 @@ void main() {
       "camera": "RGB",
       "deleted": false
     };
-    canceledResponse = {
-      "uuid": "uuidfoo",
-      "name": "flightname",
-      "annotations": "some notes",
-      "date": "2020-01-01",
-      "processing_time": 1000 * 60 * 4,
-      "state": "CANCELED",
-      "nodeodm_info": {
-        "progress": 40,
-      },
-      "camera": "RGB",
-      "deleted": false
-    };
+//    canceledResponse = {
+//      "uuid": "uuidfoo",
+//      "name": "flightname",
+//      "annotations": "some notes",
+//      "date": "2020-01-01",
+//      "processing_time": 1000 * 60 * 4,
+//      "state": "CANCELED",
+//      "nodeodm_info": {
+//        "progress": 40,
+//      },
+//      "camera": "RGB",
+//      "deleted": false
+//    };
 
     client = MockClient();
     Api.client = client;
