@@ -19,6 +19,8 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:flutter_app/user_requests.dart';
 import 'package:flutter_app/users_widget.dart';
+import 'package:flutter_app/blocks_widget.dart';
+import 'package:flutter_app/create_block_widget.dart';
 import 'api.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -74,6 +76,8 @@ class _AppState extends State<MyNewApp> {
             PasswordResetRequestedWidget(),
         AdminOptionsWidget.routeName: (context) => AdminOptionsWidget(),
         UsersWidget.routeName: (context) => UsersWidget(),
+        BlocksWidget.routeName: (context) => BlocksWidget(),
+        NewBlockWidget.routeName: (context) => NewBlockWidget(),
       },
 //      theme: ThemeData(primarySwatch: Colors.green),
     );
