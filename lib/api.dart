@@ -13,6 +13,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 
 import 'models/flight.dart';
 import 'models/user.dart';
+import 'models/block.dart';
 import 'orthomosaic_preview.dart';
 
 class Api {
@@ -391,4 +392,37 @@ class Api {
     }
     return _parseErrorDict(utf8.decode(response.bodyBytes));
   }
+
+  static Future<List<Block>> fetchBlockRequest() async {
+    final response = await client.get(ENTRYPOINT + '/block_criteria',
+        headers: {"Authorization": "Token " + (await getToken())});
+    var blocks;
+    if (response.statusCode == 200) {
+      blocks = Block.parse(response.body)
+          .toList();
+      return blocks;
+    } else {
+      throw Exception(response.body);
+    }
+  }
+
+
+  static Future<bool> tryDeleteBlock(Block b) async {
+    final response = await client.delete(ENTRYPOINT + '/block_criteria/${b.pk}/',
+        headers: {"Authorization": "Token " + (await getToken())});
+    return response.statusCode == 201;
+  }
+
+
+  static Future<bool> tryCreateBlock(Block b) async {
+    final response = await client.post(ENTRYPOINT + '/block_criteria/', headers: {
+      "Authorization": "Token " + (await getToken())
+    }, body: {
+      "value": b.value,
+      "type": b.type,
+      "ip": b.ip,
+    });
+    return response.statusCode == 201;
+  }
+
 }

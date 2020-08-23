@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter_app/blocks_widget.dart';
 import 'package:flutter_app/users_widget.dart';
 import 'drawer.dart';
 import 'package:flutter_app/user_requests.dart';
@@ -44,6 +45,11 @@ class _AdminOptionsDetailState extends State<_AdminOptionsDetailWidget> {
             onPressed: () async =>
                 Navigator.pushReplacementNamed(context, UsersWidget.routeName),
           ),
+          RaisedButton(
+            child: Text("Bloqueos"),
+            onPressed: () async =>
+                Navigator.pushReplacementNamed(context, BlocksWidget.routeName),
+          )
         ]));
   }
 }
