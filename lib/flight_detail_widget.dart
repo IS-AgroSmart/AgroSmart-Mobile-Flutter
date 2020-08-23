@@ -19,7 +19,7 @@ class FlightDetailWidget extends StatefulWidget {
 }
 
 class _FlightDetailWidgetState extends State<FlightDetailWidget> {
-  final Flight flight;
+  Flight flight;
   StreamController<Flight> _flightStream;
 
   _FlightDetailWidgetState(this.flight);
@@ -176,7 +176,9 @@ class _FlightDetailWidgetState extends State<FlightDetailWidget> {
   }
 
   Future<void> _updateFlight() async {
-    var flights = await Api.fetchFlightDetails(this.flight);
-    _flightStream.add(flights);
+    var flight = await Api.fetchFlightDetails(this.flight);
+    print(flight.state);
+    setState(() => this.flight = flight);
+    _flightStream.add(flight);
   }
 }
