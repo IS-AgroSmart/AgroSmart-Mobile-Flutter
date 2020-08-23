@@ -17,7 +17,7 @@ import 'models/block.dart';
 import 'orthomosaic_preview.dart';
 
 class Api {
-  static const ENTRYPOINTG = 'http://d2cb5be2f02f.ngrok.io/';
+  static const ENTRYPOINTG = 'http://droneapp.ngrok.io/';
   static const ENTRYPOINT = ENTRYPOINTG + "api";
   static const ENTRYPOINTNODE = ENTRYPOINTG + "nodeodm/";
 
