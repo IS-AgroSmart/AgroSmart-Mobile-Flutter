@@ -24,7 +24,7 @@ class NewBlockForm extends StatefulWidget {
 
 class NewBlockFormState extends State<NewBlockForm> {
   final _formKey = GlobalKey<FormState>();
-  String _value, _ip, _option;
+  String _value;
   Option option;
   bool _success = true;
 

@@ -103,13 +103,6 @@ abstract class AbstractsBlocksState extends State<AbstractBlocks> {
         textColor: Colors.white);
   }
 
-  void _onItemTapped(int index) {
-    setState(() => _selectedIndex = index);
-    textFilter = '';
-    _blocksStream.add(null); //para hacer que la pagina se recarge
-    _loadBlocks();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -193,11 +186,9 @@ abstract class AbstractsBlocksState extends State<AbstractBlocks> {
 
   Future<void> _action(Block block, String action, _context) async {
     var message = '';
-    var type = '';
 
     if (action == 'EliminarPermanente') {
       message = 'eliminado de forma permamente';
-      type = "eliminar";
     }
 
     return showDialog<void>(
