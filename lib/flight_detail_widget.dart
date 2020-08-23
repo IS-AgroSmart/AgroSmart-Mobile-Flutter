@@ -177,7 +177,6 @@ class _FlightDetailWidgetState extends State<FlightDetailWidget> {
 
   Future<void> _updateFlight() async {
     var flight = await Api.fetchFlightDetails(this.flight);
-    print(flight.state);
     setState(() => this.flight = flight);
     _flightStream.add(flight);
   }

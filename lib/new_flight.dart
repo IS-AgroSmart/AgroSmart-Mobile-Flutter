@@ -82,6 +82,7 @@ class NewFlightFormState extends State<NewFlightForm> {
                 validator: dateValidator,
               ),
               DropdownButtonFormField<Camera>(
+                key: Key("camera-dropdown"),
                 value: camera,
                 items: Camera.values
                     .map((camera) => DropdownMenuItem(
@@ -91,7 +92,7 @@ class NewFlightFormState extends State<NewFlightForm> {
                     .toList(),
                 onChanged: (newValue) => setState(() => camera = newValue),
                 decoration: const InputDecoration(
-                  hintText: 'Seleccione una cámara',
+                  hintText: 'Seleccione la cámara usada',
                   labelText: 'Cámara',
                 ),
                 validator: cameraValidator,
