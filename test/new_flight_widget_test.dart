@@ -127,8 +127,7 @@ void main() {
     expect(cameraDropdown, findsOneWidget);
     await tester.tap(cameraDropdown);
     await tester.pumpAndSettle();
-    await tester.tap(
-        find.descendant(of: cameraDropdown, matching: find.text("Micasense")));
+    await tester.tap(find.text("Micasense").last);
     await tester.pumpAndSettle();
     expect(find.text("OK"), findsNothing);
     await tester.tap(find.byType(DateTimeField));
@@ -155,6 +154,7 @@ void main() {
     expect(
         verifier.captured[1], containsPair("Authorization", "Token faketoken"));
     expect(verifier.captured[2], containsPair("name", "foo"));
+    expect(verifier.captured[2], containsPair("camera", "MICASENSE"));
 
     verify(mockObserver.didReplace(
         newRoute: anyNamed("newRoute"), oldRoute: anyNamed("oldRoute")));

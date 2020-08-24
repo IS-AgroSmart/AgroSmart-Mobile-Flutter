@@ -25,19 +25,15 @@ abstract class AbstractsBlocksState extends State<AbstractBlocks> {
   String appTitle;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   String textFilter = '';
-  static int _selectedIndex = 0;
   double sizeIconBlock = 60;
   Color iconColorBlock;
   Color cardColor = Colors.lightBlue[50];
-  Icon icon1;
-  Icon icon2;
+
   Icon iconBlock;
-  String textIcon1;
-  String textIcon2;
-  bool blockIconVisible = true,
-      icon1Visible = true;
+
+  bool blockIconVisible = true;
+
   bool selected1 = false;
-  String description = '';
 
   @override
   void initState() {
@@ -47,35 +43,10 @@ abstract class AbstractsBlocksState extends State<AbstractBlocks> {
   }
 
   void _loadBlocks() async {
-    if (_selectedIndex == 0) {
-      //for request deleted
-      blocks = await blocksFutureActive();
-      blockIconVisible = false;
-      iconColorBlock = Colors.blue;
+    blocks = await blocksFutureActive();
+    blockIconVisible = false;
+    iconColorBlock = Colors.blue;
 
-      icon1Visible = false;
-      icon1 = Icon(Icons.check); // Won't be seen
-
-      icon2 = Icon(Icons.delete_forever);
-      textIcon2 = 'Eliminar';
-
-      description = 'Descripción: Usuario Activo\n\n';
-    } else {
-      //for request deleted
-      blocks = await blocksFutureCallableRequestsDeleted();
-      blockIconVisible = false;
-      iconColorBlock = Colors.red;
-
-      icon1Visible = true;
-      icon1 = Icon(Icons.restore);
-      textIcon1 = 'Restaurar';
-
-      icon2 = Icon(Icons.delete_forever);
-      textIcon2 = 'EliminarPermanente';
-
-      description =
-      'Descripción: La solicitud del usuario esta eliminada eliga que acción tomar\n\n';
-    }
     iconBlock = Icon(
       Icons.account_circle,
       size: sizeIconBlock,
@@ -83,10 +54,10 @@ abstract class AbstractsBlocksState extends State<AbstractBlocks> {
     );
     if (textFilter.isNotEmpty) {
       _blocksStream.add(blocks
-          .where((u) =>
-      u.value != null? u.value.toLowerCase().indexOf(textFilter) > -1 :
-      u.ip.toLowerCase().indexOf(textFilter) > -1 ||
-          u.type.toLowerCase().indexOf(textFilter) > -1)
+          .where((u) => u.value != null
+              ? u.value.toLowerCase().indexOf(textFilter) > -1
+              : u.ip.toLowerCase().indexOf(textFilter) > -1 ||
+                  u.type.toLowerCase().indexOf(textFilter) > -1)
           .toList());
     } else {
       _blocksStream.add(blocks);
@@ -145,17 +116,19 @@ abstract class AbstractsBlocksState extends State<AbstractBlocks> {
                       shadowColor: Colors.amberAccent,
                       child: ListTile(
                         leading: iconBlock,
-                        title: Text('Si el '+'${block.type}'+ ' es igual a:'),
-                        subtitle: Text('${block.type}'+": " +
-                            '${null != block.value? block.value: block.ip}'),
+                        title:
+                            Text('Si el ' + '${block.type}' + ' es igual a:'),
+                        subtitle: Text('${block.type}' +
+                            ": " +
+                            '${null != block.value ? block.value : block.ip}'),
                         trailing: Wrap(spacing: 0, children: <Widget>[
                           IconButton(
-                            key: Key("icon2-user-${block.pk}"),
-                            icon: icon2,
+                            key: Key("icon2-criteria-${block.pk}"),
+                            icon: Icon(Icons.delete_forever),
                             color: Colors.red,
-                            tooltip: textIcon2,
+                            tooltip: 'Eliminar',
                             onPressed: () async =>
-                            {_action(block, textIcon2, _context)},
+                                {_action(block, 'Eliminar', _context)},
                           ),
                         ]),
                       ),
@@ -200,8 +173,7 @@ abstract class AbstractsBlocksState extends State<AbstractBlocks> {
           content: SingleChildScrollView(
             child: ListBody(
               children: <Widget>[
-                Text("El criterio será " +
-                    message),
+                Text("El criterio será " + message),
               ],
             ),
           ),
@@ -224,11 +196,9 @@ abstract class AbstractsBlocksState extends State<AbstractBlocks> {
   }
 
   helper(Block block, _context) async {
-    Api.tryDeleteBlock(block)
-          .then((value) => this.showToast(value))
-          .catchError((error) =>
-          Scaffold.of(_context).showSnackBar(
-              SnackBar(content: Text('Error al eliminar criterio de bloqueo'))));
+    Api.tryDeleteBlock(block).then((value) => this.showToast(value)).catchError(
+        (error) => Scaffold.of(_context).showSnackBar(
+            SnackBar(content: Text('Error al eliminar criterio de bloqueo'))));
     _loadBlocks();
     Navigator.of(context).pop();
   }
