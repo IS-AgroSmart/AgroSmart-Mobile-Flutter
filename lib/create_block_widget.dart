@@ -49,14 +49,14 @@ class NewBlockFormState extends State<NewBlockForm> {
                   "Error al crear criterio!",
                   style: TextStyle(color: Colors.red),
                 ),
-
               DropdownButtonFormField<Option>(
+                key: Key("type-dropdown"),
                 value: option,
                 items: Option.values
                     .map((op) => DropdownMenuItem(
-                  value: op,
-                  child: Text(OptionHelper.description(op)),
-                ))
+                          value: op,
+                          child: Text(OptionHelper.description(op)),
+                        ))
                     .toList(),
                 onChanged: (newValue) => setState(() => option = newValue),
                 decoration: const InputDecoration(
@@ -70,8 +70,7 @@ class NewBlockFormState extends State<NewBlockForm> {
                 maxLines: 6,
                 validator: descriptionValidator,
                 decoration: InputDecoration(
-                    hintText: "Valor",
-                    labelText: "Valor del criterio"),
+                    hintText: "Valor", labelText: "Valor del criterio"),
                 onSaved: (val) => _value = val,
               ),
               RaisedButton(
@@ -79,12 +78,16 @@ class NewBlockFormState extends State<NewBlockForm> {
                   if (_formKey.currentState.validate()) {
                     _formKey.currentState.save();
                     Block b;
-                    if(option == Option.IP) {
+                    if (option == Option.IP) {
                       b = Block(
-                          ip: _value, value:'', type: OptionHelper.description(Option.IP));
+                          ip: _value,
+                          value: '',
+                          type: OptionHelper.description(Option.IP));
                     } else {
                       b = Block(
-                          ip: '', value: _value, type: OptionHelper.description(option));
+                          ip: '',
+                          value: _value,
+                          type: OptionHelper.description(option));
                     }
                     var success = await Api.tryCreateBlock(b);
                     setState(() => _success = success);

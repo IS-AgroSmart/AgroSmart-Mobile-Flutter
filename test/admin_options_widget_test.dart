@@ -44,7 +44,7 @@ void main() {
     await tester.pumpWidget(widget);
 
     expect(find.text("Opciones Admin"), findsOneWidget);
-    expect(find.byType(RaisedButton), findsNWidgets(2));
+    expect(find.byType(RaisedButton), findsNWidgets(3));
   });
 
   testWidgets("AdminOptionsWidget navigates to User Requests",

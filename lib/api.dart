@@ -259,7 +259,6 @@ class Api {
     final response = await client.get(ENTRYPOINT + '/flights/${f.uuid}',
         headers: {"Authorization": "Token " + (await getToken())});
     if (response.statusCode == 200) {
-      print("Updating");
       return Flight.fromMap(json.decode(response.body).cast<String, dynamic>());
     }
     return null;

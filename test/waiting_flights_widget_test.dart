@@ -170,7 +170,7 @@ void main() {
   });
 
   test("WaitingFlightsWidget has the correct route name", () {
-    expect(WaitingFlightsWidget.routeName, "/flights/waiting");
+    expect(WaitingFlightsWidget().routeNameFunc(), "/flights/waiting");
   });
 
   testWidgets("WaitingFlightsWidget calls the API and passes token",

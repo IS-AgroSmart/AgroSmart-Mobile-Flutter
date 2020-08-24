@@ -114,6 +114,10 @@ void main() {
     await tester.pumpAndSettle();
   }
 
+  test("BlocksWidget has the correct route name", () {
+    expect(UsersWidget().routeNameFunc(), "/users/");
+  });
+
   testWidgets("UsersWidget has buttons for users types",
       (WidgetTester tester) async {
     await pumpArgumentWidget(tester, args: null, child: UsersWidget());
@@ -205,9 +209,9 @@ void main() {
 
   testWidgets("UsersWidget shows snackbar if delete fails",
       (WidgetTester tester) async {
-        when(client.patch(any,
+    when(client.patch(any,
             headers: anyNamed("headers"), body: anyNamed("body")))
-            .thenThrow(SocketException("dummy"));
+        .thenThrow(SocketException("dummy"));
     await pumpArgumentWidget(tester, args: null, child: UsersWidget());
     await tester.tap(find.text("Activos"));
     await tester.pumpAndSettle();
