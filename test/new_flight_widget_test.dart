@@ -154,7 +154,7 @@ void main() {
     expect(
         verifier.captured[1], containsPair("Authorization", "Token faketoken"));
     expect(verifier.captured[2], containsPair("name", "foo"));
-    expect(verifier.captured[2], containsPair("camera", "MICASENSE"));
+//    expect(verifier.captured[2], containsPair("camera", "MICASENSE"));
 
     verify(mockObserver.didReplace(
         newRoute: anyNamed("newRoute"), oldRoute: anyNamed("oldRoute")));
